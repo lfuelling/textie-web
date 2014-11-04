@@ -15,5 +15,5 @@ Eine **kompliziertere** Methode ist, im Terminal (Im Hauptverzeichnis des Projek
 
 Und dann im Browser auf ```http://localhost/webapp``` gehen. 
 
-## Das Projekt benötigt Java 1.7
+#### Das Projekt benötigt *mindestens* Java 1.7
 
