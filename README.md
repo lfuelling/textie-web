@@ -7,7 +7,9 @@ Momentan gibt es nur eine Textie Instanz. Das bedeutet, dass man, wenn man die S
 Das kann man als Bug sehen, oder als Feature. Jeder wie er mag.
 
 **Um das Projekt auszuführen** kann man das Projekt in IntelliJ öffnen und dort starten.
-Oder im Terminal (Im Hauptverzeichnis des Projekts) folgendes Kommando ausführen:
+
+
+Eine **kompliziertere** Methode ist, im Terminal (Im Hauptverzeichnis des Projekts) folgendes Kommando ausführen:
 
 ```mvn clean install jetty:run```
 
