@@ -4,15 +4,20 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+
+import com.mongodb.*;
 import de.micromata.azubi.Textie;
 import de.micromata.azubi.model.Dungeon;
+
+import java.net.UnknownHostException;
+
 
 /**
  * Root resource (exposed at "myresource" path)
  */
 @Path("textie")
 public class Receiver {
-private Dungeon dungeon;
+//private Dungeon dungeon = Dungeon.createDungeon();
   /**
    * Method handling HTTP GET requests. The returned object will be sent
    * to the client as "text/plain" media type.
@@ -23,8 +28,8 @@ private Dungeon dungeon;
   @Consumes("text/plain")
   @Produces("text/plain")
   public String handleInput(String input) {
-    dungeon = Dungeon.getDungeon();
-    Textie.diag = false;
+    connect();
+    /*Textie.diag = false;
     Textie.webapp = true;
     Textie.lastPrintedText = "";
     String[] parsedargs = {""};
@@ -33,9 +38,36 @@ private Dungeon dungeon;
       parsedargs = parsedcmd[1].split(" ", 2);
     }
     Textie.executeCommand(parsedcmd,
-        parsedargs);
+        parsedargs, dungeon);
     Thread.yield();
 
-    return Textie.lastPrintedText;
+    return Textie.lastPrintedText;*/
+          return "hallo";
   }
+
+
+  public void connect() {
+    MongoClient mongoClient = null;
+    try {
+      mongoClient = new MongoClient();
+    } catch (UnknownHostException e) {
+      e.printStackTrace();
+    }
+    DB db = mongoClient.getDB( "textieWeb" );
+
+    String name = "Test";
+    String config = "";
+    DBCollection coll = db.getCollection("userConfigs");
+    DBObject test = coll.findOne();
+
+
+  }
+
+
+
+
+
+
+
+
 }

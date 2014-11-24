@@ -11,10 +11,10 @@ import java.util.List;
  * @author Lukas F&uuml;lling (l.fuelling@micromata.de)
  * @author Julian Siebert (j.siebert@micromata.de)
  */
-public class Inventory implements Serializable {
+public class Inventory implements Serializable, Examineable{
 
     private static final long serialVersionUID = -706607514666174299L;
-    
+
     public final static int MAX_SLOTS_INVENTORY = 99;
 
     private List<Item> items = new ArrayList<>();
@@ -36,16 +36,25 @@ public class Inventory implements Serializable {
             }
             items.removeAll(remove);
         }
-        // FIXME +5 für Spieler wird auf 198 + 5 gesetzt!!!!
-        maxSlots = maxSlots + slots; //FIXME Zusätzliche Methode zum vergrößern
+        maxSlots = slots;
+    }
+
+    /**
+     * Increases the size(slots) of the inventory
+     * @param slots Slots to add
+     * @return The new size of the inventory
+     */
+    public int increaseMaxSlots(int slots){
+        maxSlots += slots;
+        return maxSlots;
     }
 
     /**
      * @return The size of the items.
      */
-    public int getInventorySize() {
+    public int getMaxSlots() {
 
-        return MAX_SLOTS_INVENTORY;
+        return maxSlots;
     }
 
 
@@ -73,15 +82,15 @@ public class Inventory implements Serializable {
     /**
      * Lists the items.
      */
-    public void listItems() {
+    public void listItems(Dungeon dungeon) {
 
         if (this.items.size() > 0) {
             for (Item items : this.items) {
                 String objectName = items.getName();
-                Textie.printText("\t" + objectName);
+                Textie.printText("\t" + objectName, dungeon);
             }
         } else {
-            Textie.printText("Nichts.");
+            Textie.printText("Nichts.", dungeon);
         }
     }
 
@@ -131,12 +140,18 @@ public class Inventory implements Serializable {
      * @return True if the item was transferred.
      */
     public boolean transferItem(Inventory target, Item itemToTransfer) {
-
-        if (target.items.add(itemToTransfer) && this.items.remove(itemToTransfer)) {
-            return true;
-        } else {
+        if(itemToTransfer.isPickable() == false){
+            Textie.printText("Du kannst dieses Item nicht aufheben.");
             return false;
         }
+        if ((target.getSize() < target.maxSlots) == false) {
+            return false;
+        }
+
+        if ((target.items.add(itemToTransfer) && this.items.remove(itemToTransfer)) == false) {
+            return false;
+        }
+        return true;
     }
 
     public Item findItemByUID(int UID) {
@@ -150,5 +165,11 @@ public class Inventory implements Serializable {
 
     public int getSize() {
         return items.size();
+    }
+
+
+    @Override
+    public void examine(Dungeon dungeon) {
+        listItems(dungeon);
     }
 }

@@ -1,9 +1,6 @@
 package de.micromata.azubi.model;
 
-import de.micromata.azubi.IOUtils;
 import de.micromata.azubi.Textie;
-import de.micromata.azubi.model.Dungeon;
-import de.micromata.azubi.model.Inventory;
 
 import java.io.Serializable;
 
@@ -16,34 +13,9 @@ public class Player implements Serializable {
     private String name;
     private Inventory inventory;
     private boolean alive;
-    private Raum position;
+    private Room position;
 
 
-
-
-
-
-    public void prompt() {
-        do {
-            String command = IOUtils.readLine("Was willst du tun? ");
-            try{
-              if (command.equals("")) {
-              } else {
-                String[] parsed_command = Textie.parseInput(command);
-
-                String[] parsed_args = new String[2];
-                if (parsed_command.length == 1 || parsed_command[1] == null) {
-                  parsed_args[0] = "nichts";
-                } else {
-                  parsed_args = Textie.parseInput(parsed_command[1]);
-                }
-                Textie.executeCommand(parsed_command, parsed_args);
-              }
-            } catch(NullPointerException e){
-              Textie.printText("Keine Eingabe.");
-            }
-        } while (Dungeon.getDungeon().getCurrentRaum().isLeaveRoom() == false);
-    }
 
     public void setInventory(Inventory inventory) {
         this.inventory = inventory;
@@ -66,11 +38,33 @@ public class Player implements Serializable {
         this.name = name;
     }
 
-    public Raum getPosition() {
+    public Room getPosition() {
         return position;
     }
 
-    public void setPosition(Raum position) {
+    public void setPosition(Room position) {
         this.position = position;
+    }
+
+    /**
+     * Lets you walk.
+     *
+     * @param direction the direction you want to go.
+     */
+    public void doWalk(Direction direction, Dungeon dungeon) {
+        if (position.getRoomNumber() == 6 && position.getNextRoom(position.findDoorByDirection(direction)) == null) {
+            Textie.printText("Der Weg wird durch eine Holzbarrikade versperrt.");
+        } else {
+            int roomNumber = position.getRoomNumber();
+            Room nextRoom = dungeon.getRoom(direction);
+            if (nextRoom != null && dungeon.findRoomByNumber(roomNumber).isLeaveRoom() == true) {
+                dungeon.setRoomNumber(nextRoom);
+                position.setLeaveRoom(false);
+                position = nextRoom;
+                Textie.printText(dungeon.getCurrentRoom().getWelcomeText());
+            }
+        }
+
+
     }
 }

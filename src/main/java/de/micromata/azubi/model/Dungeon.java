@@ -1,10 +1,15 @@
 package de.micromata.azubi.model;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonParser;
 import de.micromata.azubi.IOUtils;
 import de.micromata.azubi.Textie;
 import de.micromata.azubi.builder.*;
 
+import javax.xml.soap.Text;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -16,29 +21,29 @@ import java.util.*;
  */
 public class Dungeon implements Serializable {
     private static final long serialVersionUID = -7870743513679247263L;
-    private ArrayList<Raum> raums = new ArrayList<>();
+    private ArrayList<Room> rooms = new ArrayList<>();
     private int currentRoomNumber; //Index des aktuellen Raumes in der RaumListe FIXME In Spieler
     private Player player;
-    private HashMap <ToggleItem,Door> doorSchalter = new HashMap<>();//FIXME ab in den Raum
-    private static Dungeon dungeon;
+    private HashMap<ToggleItem, Door> doorSchalter = new HashMap<>();//FIXME ab in den Raum
 
-    private Dungeon() {}
+    private Dungeon() {
+    }
 
 
     /**
      * Initializes the game
 
-    public void init() {
-        player = new Player("Fremder", true);
-        previousRoomNumber = 1;
-        initRooms();
-        initInventories();
-        initHumans();
-        initDoors();
-        initDoorSchalter();
-        player.getItems().setInventorySize(5);
+     public void init() {
+     player = new Player("Fremder", true);
+     previousRoomNumber = 1;
+     initRooms();
+     initInventories();
+     initHumans();
+     initDoors();
+     initDoorSchalter();
+     player.getItems().setInventorySize(5);
 
-    }
+     }
      */
 
     /**
@@ -46,367 +51,278 @@ public class Dungeon implements Serializable {
      *
      * @return The world
      */
-    public static Dungeon getDungeon() {
-        if (dungeon == null) {
-            dungeon = init();
-        }
-        return dungeon;
+    public static Dungeon createDungeon() {
+
+        return init();
     }
-    
+
     /**
      * Wird nur von getDungeon aufgerufen und erzeugt die Dungeon Instanz
-     * 
+     *
      * @return
      */
     private static Dungeon init() {
-    	DungeonBuilder dungeonBuilder = new DungeonBuilder(new Dungeon());
-        
-    	PlayerBuilder fremder = new PlayerBuilder().addName("Fremder").add(new InventarBuilder().build()).build();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.getFactory().enable(JsonParser.Feature.ALLOW_COMMENTS);
+        List<LinkedHashMap> roomList = null;
+        try {
+            roomList = mapper.readValue(new File("config/TextieConf.json"), List.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        DungeonBuilder dungeonBuilder = new DungeonBuilder(new Dungeon());
+        PlayerBuilder fremder = new PlayerBuilder().addName("Fremder").add(new InventoryBuilder().addSize(5).build()).build();
         dungeonBuilder.add(fremder);
-        
-        RaumBuilder raum1 = new RaumBuilder().addRoomNumber(1).addwillkommensNachricht("Du befindest dich in einem dunklen Raum. Nach einiger Zeit gewöhnen sich deine Augen an die Dunkelheit.")
-                .addInventory(new InventarBuilder()
-                        .addItem(new ToggleItemBuilder().setState(false).setName("Fackel").setPickable(true).setUntersucheText("Du betrachtest die Fackel. Wie kann man die wohl anzünden?").setBenutzeText("Du zündest deine Fackel mit dem Feuerzeug an.").build())
-                        .addItem(new ItemBuilder().setName("Handtuch").setPickable(true).setUntersucheText("Das Handtuch sieht sehr flauschig aus.").setBenutzeText("Du wischst dir den Angstschweiß von der Stirn.").build())
-                        .addItem(new StorageItemBuilder().setLockState(true).setInventarBuilder(new InventarBuilder().build()).setName("Truhe").setPickable(false).setUntersucheText("Die Truhe ist verschlossen. Es sieht nicht so aus, als könnte man sie aufbrechen.").setBenutzeText("Du kannst die Truhe nicht öffnen.").build())
-                        .addItem(new ToggleItemBuilder().setState(false).setName("Schalter").setPickable(false).setUntersucheText("Da ist ein kleiner Schalter an der Wand.").setBenutzeText("Du hörst ein Rumpeln, als du den Schalter drückst.").build())
-                        .build())
-                .build();
 
-        RaumBuilder raum2 = new RaumBuilder().addRoomNumber(2).addwillkommensNachricht("Du kommst in einen dunklen Raum.")
-                .addInventory(new InventarBuilder()
-                        .addItem(new ItemBuilder().setName("Stein").setPickable(true).setUntersucheText("Du betrachtest den Stein. Er wirkt kalt.").setBenutzeText("Du wirfst den Stein vor dir auf den Boden und hebst ihn wieder auf. Was ein Spaß.").build())
-                        .addItem(new ItemBuilder().setName("Schwert").setPickable(true).setUntersucheText("Du betrachtest das Schwert. Es sieht sehr scharf aus.").setBenutzeText("Du stichst dir das Schwert zwischen die Rippen und stirbst.").build())
-                        .addItem(new ItemBuilder().setName("Feuerzeug").setPickable(true).setUntersucheText("Du betrachtest das Feuerzeug. Es wirkt zuverlässig.").setBenutzeText("Du zündest deine Fackel mit dem Feuerzeug an.").build()).build())
-                .build();
-
-        RaumBuilder raum3 = new RaumBuilder().addRoomNumber(3).addwillkommensNachricht("Es ist zu dunkel, um etwas zu sehen. Ein seltsamer Geruch liegt in der Luft.")
-                .addInventory(new InventarBuilder()
-                        .addItem(new ItemBuilder().setName("Falltür").setPickable(false).setUntersucheText("Da ist eine Falltür").setBenutzeText("Du schlüpfst durch die Falltür in den darunterliegenden Raum.").build())
-                        .addItem(new ItemBuilder().setName("Whiteboard").setPickable(false).setUntersucheText("Es steht \'FLIEH!\' mit Blut geschrieben darauf.").setBenutzeText("Das fasse ich bestimmt nicht an!").build())
-                        .addItem(new ItemBuilder().setName("Brecheisen").setPickable(true).setUntersucheText("Da ist ein Brecheisen, es ist \"Gordon\" eingeritzt.").setBenutzeText("Du kratzt dich mit dem Brecheisen am Kopf").build())
-                        .addItem(new ItemBuilder().setName("Quietscheente").setPickable(true).setUntersucheText("Die Ente schaut dich vorwurfsvoll an.").setBenutzeText("Die Ente schaut dich vorwurfsvoll an und quietscht leise, als du sie zusammendrückst.").build())
-                        .build())
-                .build();
-
-        RaumBuilder raum4 = new RaumBuilder().addRoomNumber(4).addwillkommensNachricht("Du kommst in einen hell erleuchteten Raum. Ein alter Mann lehnt an der Wand.")
-                .addHuman(new HumanBuilder().setHumanName("Gordon").setDialog1("Hast du die Truhe gesehen? Ich frage mich, was da wohl drin ist...").setDialog2("...").setQuestDoneText("Sehr gut. Danke dir.").setQuestText("Ich suche ein Brecheisen. Hast du eins?").setQuestItem("Brecheisen").setRewarditem(new ItemBuilder().setName("Schlüssel").setPickable(true).setUntersucheText("Du betrachtest den Schlüssel. Was kann man damit wohl aufschließen?").setBenutzeText("Hier gibt es nichts um den Schlüssel zu benutzen.").build()).build())
-                .addInventory(new InventarBuilder()
-                        .addItem(new ItemBuilder().setName("Sack").setPickable(true).setUntersucheText("Du betrachtest den Sack. Vielleicht kannst du ihn ja an deinem Rucksack befestigen.").setBenutzeText("Du bindest den Sack an deinen Rucksack.").build())
-                        .addItem(new ToggleItemBuilder().setState(false).setName("Schalter").setUntersucheText("Da ist ein kleiner Schalter an der Wand.").setBenutzeText("Du hörst ein Rumpeln, als du den Schalter drückst.").build())
-                        .addItem(new KartenBuilder().setName("Karte").setPickable(true).setUntersucheText("Das ist eine Karte, sie zeigt deinen Laufweg.").build()).build())
-                .build();
-
-        RaumBuilder raum5 = new RaumBuilder().addRoomNumber(5).addwillkommensNachricht("Du kommst in einen Raum, in dem eine Junge steht.")
-                 .addHuman(new HumanBuilder().setHumanName("Junge").setDialog1("Ich suche meine Mutter.").setDialog2("Finde sie!").setQuestDoneText("Danke").setQuestText("Hier ein Brief bring ihn zu einer Frau.").setQuestItem("Handtuch").setRewarditem(new ItemBuilder().setName("Brief").setPickable(true).setBenutzeText("Bringe den Brief zu einer Frau").setUntersucheText("Ein Brief adressiert an eine Frau.").build()).build())
-                 .addInventory(new InventarBuilder()
-                 .addItem(new ItemBuilder().setName("Falltür").setPickable(false).setUntersucheText("Da ist eine Falltür").setBenutzeText("Du schlüpfst durch die Falltür in den darunterliegenden Raum.").build()).build()).build();
-
-        RaumBuilder raum6 = new RaumBuilder().addRoomNumber(6).addwillkommensNachricht("Du kommst in einen Raum mit einer Truhe").addInventory(new InventarBuilder().addItem(new StorageItemBuilder().setLockState(false).setInventarBuilder(new InventarBuilder().addItem(new ItemBuilder().setName("Axt").setPickable(true).setUntersucheText("Eine scharfe Axt.").setBenutzeText("Du schlägst mit der Axt zu und zerstörst die Holzbarrikade.").build()).build()).setName("Truhe").setPickable(false).setUntersucheText("Ein große Truhe aus Holz.").setBenutzeText("Du öffnest die Truhe.").build()).build()).build();
-
-        RaumBuilder raum7 = new RaumBuilder().addRoomNumber(7).addwillkommensNachricht("Du kommst in einen Raum, eine Frau steht mitten im Raum.")
-               .addHuman(new HumanBuilder().setHumanName("Frau").setDialog1("Du hast mein Sohn gesehen ?").setDialog2("Wo ?").setQuestDoneText("Danke, Hier ein Seil für dich.").setQuestItem("Brief").setRewarditem(new ItemBuilder().setName("Seil").setPickable(true).setUntersucheText("Ein stabiles Seil.").setBenutzeText("Du bindest das Seil fest.").build()).build())
-                .addInventory(new InventarBuilder().addItem(new ToggleItemBuilder().setState(false).setBenutzeText("Du hörst ein Rumpeln, als du den Schalter drückst.").setName("Schalter").setPickable(false).setUntersucheText("Da ist ein kleiner Schalter an der Wand.").build()).build().build());
-
-        raum1.addDoor(new DoorBuilder().setRichtung(Richtung.SUED).setNextRoom(raum2.get()).setLock(false).build())
-                .addDoor(new DoorBuilder().setRichtung(Richtung.WEST).setNextRoom(raum4.get()).setLock(true).build()).build();
-
-        raum2.addDoor(new DoorBuilder().setRichtung(Richtung.WEST).setNextRoom(raum3.get()).setLock(false).build())
-                .addDoor(new DoorBuilder().setRichtung(Richtung.NORD).setNextRoom(raum1.get()).setLock(false).build()).build();
-
-        raum3.addDoor(new DoorBuilder().setRichtung(Richtung.FALLTUER).setNextRoom(raum4.get()).build())
-                .addDoor(new DoorBuilder().setRichtung(Richtung.OST).setNextRoom(raum2.get()).build()).build();
-
-        raum4.addDoor(new DoorBuilder().setRichtung(Richtung.OST).setNextRoom(raum1.get()).setLock(true).build()).addDoor(new DoorBuilder().setRichtung(Richtung.WEST).setLock(false).setNextRoom(raum5.get()).build()).addDoor(new DoorBuilder().setNextRoom(raum7.get()).setLock(true).setRichtung(Richtung.NORD).build()).build();
-
-        raum5.addDoor(new DoorBuilder().setRichtung(Richtung.FALLTUER).setNextRoom(raum6.get()).setLock(false).build()).addDoor(new DoorBuilder().setLock(false).setNextRoom(raum4.get()).setRichtung(Richtung.OST).build()).build();
-
-
-        //raum6.addDoor(new DoorBuilder().setRichtung(Richtung.OST).setLock(false).setNextRoom(raum7.get()).build()).build();
-
-        raum7.addDoor(new DoorBuilder().setRichtung(Richtung.SUED).setLock(true).setNextRoom(raum4.get()).build()).addDoor(new DoorBuilder().setNextRoom(raum6.get()).setRichtung(Richtung.WEST).setLock(false).build()).build();
-        dungeonBuilder.addRoom(raum1).addRoom(raum2).addRoom(raum3).addRoom(raum4).addRoom(raum5).addRoom(raum6).addRoom(raum7);
-
+        for (LinkedHashMap listItem : roomList) {
+            BaseRoomBuilder room = null;
+            String roomClass = (String) listItem.get("class");
+            switch (roomClass) {
+                case "de.micromata.azubi.model.Room":
+                    room = new RoomBuilder(dungeonBuilder.get());
+                    break;
+                case "de.micromata.azubi.model.DarkRoom":
+                    room = new DarkRoomBuilder(dungeonBuilder.get());
+                    break;
+            }
+            room.addRoomNumber((int) listItem.get("roomNumber")).addwillkommensNachricht((String) listItem.get("welcomeText"));
+            LinkedHashMap human = (LinkedHashMap) listItem.get("human");
+            if (human == null) {
+            } else {
+                HumanBuilder hb = new HumanBuilder().setHumanName((String) human.get("name"))
+                        .setDialog1((String) human.get("dialog1"))
+                        .setDialog2((String) human.get("dialog2"))
+                        .setQuestDoneText((String) human.get("questDoneText"))
+                        .setQuestText((String) human.get("questText"))
+                        .setQuestItem((String) human.get("questItem"));
+                BaseItemBuilder rewardItemBuilder = null;
+                LinkedHashMap rewardItem = (LinkedHashMap) human.get("rewardItem");
+                String rewardItemClass = (String) rewardItem.get("class");
+                switch (rewardItemClass) {
+                    case "de.micromata.azubi.model.Item":
+                        rewardItemBuilder = new ItemBuilder();
+                        break;
+                    case "de.micromata.azubi.model.ToggleItem":
+                        rewardItemBuilder = new ToggleItemBuilder().setState((boolean) rewardItem.get("state"));
+                        break;
+                    default:
+                        System.out.println("Fehler in der Konfiguration. Fehlerhafte Klasse in rewardItem");
+                }
+                rewardItemBuilder.setName((String) rewardItem.get("name")).setBenutzeText((String) rewardItem.get("useText")).setUntersucheText((String) rewardItem.get("examineText")).build();
+                hb.setRewarditem(rewardItemBuilder).build();
+                room.addHuman(hb);
+            }
+            InventoryBuilder ib = new InventoryBuilder();
+            List<BaseItemBuilder> ibs = new ArrayList();
+            LinkedHashMap inventory = (LinkedHashMap) listItem.get("inventory");
+            ArrayList<LinkedHashMap> items = (ArrayList<LinkedHashMap>) inventory.get("items");
+            BaseItemBuilder itemBuilder = null;
+            for (LinkedHashMap item : items) {
+                String itemClass = (String) item.get("class");
+                switch (itemClass) {
+                    case "de.micromata.azubi.model.Item":
+                        itemBuilder = new ItemBuilder();
+                        break;
+                    case "de.micromata.azubi.model.ToggleItem":
+                        itemBuilder = new ToggleItemBuilder().setState((boolean) item.get("state"));
+                        break;
+                    case "de.micromata.azubi.model.StorageItem":
+                        InventoryBuilder chestInvBuilder;
+                        itemBuilder = new StorageItemBuilder().setLockState((boolean) item.get("lockState")).setInventoryBuilder(chestInvBuilder = new InventoryBuilder());
+                        LinkedHashMap chestInv = (LinkedHashMap) item.get("inventory");
+                        ArrayList<LinkedHashMap> chestItems = (ArrayList<LinkedHashMap>) chestInv.get("items");
+                        for (LinkedHashMap chestItem : chestItems) {
+                            BaseItemBuilder chestItemBuilder = null;
+                            String rewardItemClass = (String) chestItem.get("class");
+                            switch (rewardItemClass) {
+                                case "de.micromata.azubi.model.Item":
+                                    chestItemBuilder = new ItemBuilder();
+                                    break;
+                                case "de.micromata.azubi.model.ToggleItem":
+                                    chestItemBuilder = new ToggleItemBuilder().setState((boolean) chestItem.get("state"));
+                                    break;
+                                default:
+                                    System.out.println("Fehler in der Konfiguration. Fehlerhafte Klasse in StorageItem");
+                            }
+                            chestItemBuilder.setName((String) chestItem.get("name")).setBenutzeText((String) chestItem.get("useText")).setUntersucheText((String) chestItem.get("examineText")).setPickable((boolean) chestItem.get("pickable")).build();
+                            chestInvBuilder.addItem(chestItemBuilder);
+                        }
+                        chestInvBuilder.build();
+                        break;
+                    case "de.micromata.azubi.model.Karte":
+                        itemBuilder = new MapBuilder();
+                        break;
+                    case "de.micromata.azubi.model.Switch":
+                        itemBuilder = new SwitchBuilder();
+                        ArrayList<Integer> doorIds = (ArrayList<Integer>) item.get("doorIds");
+                        for(int doorId : doorIds){
+                            ((SwitchBuilder)itemBuilder).addDoor(doorId);
+                        }
+                        break;
+                    default:
+                        System.out.println("Fehler in der Konfiguration. Fehlerhafte Klasse in Item");
+                }
+                itemBuilder.setName((String) item.get("name"))
+                        .setPickable((boolean) item.get("pickable"))
+                        .setUntersucheText((String) item.get("examineText"))
+                        .setBenutzeText((String) item.get("useText"))
+                        .build();
+                ibs.add(itemBuilder);
+            }
+            for (BaseItemBuilder itemBuilder1 : ibs) {
+                ib.addItem(itemBuilder1);
+            }
+            ib.build();
+            room.addInventory(ib).build();
+            DoorBuilder db;
+            List<LinkedHashMap> doorList = (List<LinkedHashMap>) listItem.get("doors");
+            for (LinkedHashMap doorItem : doorList) {
+                db = new DoorBuilder()
+                        .setDoorId((int) doorItem.get("doorId"))
+                        .setLock((boolean) doorItem.get("locked"))
+                        .setRichtungByText((String) doorItem.get("direction"))
+                        .setNextRoom((int) doorItem.get("nextRoom")).build();
+                room.addDoor(db);
+            }
+            room.build();
+            dungeonBuilder.addRoom(room);
+        }
         return dungeonBuilder.build().get();
     }
-    /*
-    RaumBuilder raum6 = new RaumBuilder().addRoomNumber(6).addwillkommensNachricht("Du kommst in einen Raum mit einer Truhe.")
-                .addInventory(new InventarBuilder().addItem(new StorageItemBuilder().setLockState(false).setInventarBuilder(new InventarBuilder().addItem(new ItemBuilder().setName("Axt").setPickable(true).setBenutzeText("Du schlägst mit der Axt zu.").setUntersucheText("Eine scharfe Axt.").build()).build()).setName("Truhe").setBenutzeText("Du versuchst die Truhe zu öffnen.").setUntersucheText("Ein große Truhe aus Holz.")).build()).build();
-    */
-
-
 
     /**
      * Starts the game.
-     *
-     * @param withPrompt Set to <code>true</code>, if you want a prompt.
      */
-    public void runGame(boolean withPrompt) {
-        //IOUtils.loadConfig();
-        currentRoomNumber = 1;
-        initDoorSchalter();
-        getCurrentRaum().start(withPrompt);
+    public void runGame() {
+        initializeGame();
+        player.setPosition(getCurrentRoom());
+        getCurrentRoom().start(true);
 
 
         while (player.isAlive()) {
-            if (getCurrentRaum().isLeaveRoom() == false) {
+            if (getCurrentRoom().isLeaveRoom() == false) {
                 continue;
             } else {
-                Raum raum = getNextRoom(currentRoomNumber);
-                raum.setLeaveRoom(false);
-                raum.start(withPrompt);
+                Room room = getNextRoom(currentRoomNumber);
+                room.setLeaveRoom(false);
+                room.start(true);
             }
         }
-        Textie.ende();
+        Textie.end(this);
     }
 
-    /**
-     * Initializes the rooms.
-     */
-    /*
-    public void initRooms() {
-        Raum raum;
-        raums = new ArrayList<>();
-        raum = new Raum(1, "Du befindest dich in einem dunklen Raum. Nach einiger Zeit gewöhnen sich deine Augen an die Dunkelheit.");
-        raums.add(raum);
+
+    private boolean firstTestRun = true;
+
+    public void runGameTest() {
+        if (firstTestRun == true) {
+            // TODO In der Initialisierung Block verschieben.
+            // Dann kann auch die unterscheidung weg fallen.
+            firstTestRun = false;
+            initializeGame();
+        }
+
+        if (player.isAlive()) {
+            if (getCurrentRoom().isLeaveRoom() == false) {
+                return;
+            } else {
+                Room room = getNextRoom(currentRoomNumber);
+                room.setLeaveRoom(false);
+                player.setPosition(room);
+                room.start(false);
+                return;
+            }
+        }
+        Textie.end(this);
+    }
+
+
+    private void initializeGame() {
         currentRoomNumber = 1;
-        raum = new Raum(2, "Du kommst in einen dunklen Raum.");
-        raums.add(raum);
-        raum = new Raum(3, "Es ist zu dunkel, um etwas zu sehen. Ein seltsamer Geruch liegt in der Luft.");
-        raums.add(raum);
-        raum = new Raum(4, "Du kommst in einen hell erleuchteten Raum. Ein alter Mann lehnt an der Wand.");
-        raums.add(raum);
-        raum = new Raum(5, "Du kommst in einen Raum, in dem eine Junge steht.");
-        raums.add(raum);
-        raum = new Raum(6, "Du kommst in einen Raum mit einer Truhe.");
-        raums.add(raum);
-        raum = new Raum(7, "Du kommst in einen Raum, eine Frau steht mitten im Raum.");
-        raums.add(raum);
+        initDoorSchalter();
     }
-    */
+
     public void initDoorSchalter() {
-        doorSchalter.put((ToggleItem)findRaumByNummer(1).getInventory().findItemByName("Schalter"), findRaumByNummer(1).findDoorByDirection(Richtung.WEST));
-        doorSchalter.put((ToggleItem)findRaumByNummer(4).getInventory().findItemByName("Schalter"), findRaumByNummer(4).findDoorByDirection(Richtung.OST));
-        doorSchalter.put((ToggleItem)findRaumByNummer(7).getInventory().findItemByName("Schalter"), findRaumByNummer(7).findDoorByDirection(Richtung.SUED));
+        doorSchalter.put((ToggleItem) findRoomByNumber(1).getInventory().findItemByName("Schalter"), findRoomByNumber(1).findDoorByDirection(Direction.WEST));
+        doorSchalter.put((ToggleItem) findRoomByNumber(4).getInventory().findItemByName("Schalter"), findRoomByNumber(4).findDoorByDirection(Direction.OST));
+        doorSchalter.put((ToggleItem) findRoomByNumber(7).getInventory().findItemByName("Schalter"), findRoomByNumber(7).findDoorByDirection(Direction.SUED));
     }
-    /*
-    public void initInventories() {
-        StorageItem truhe;
-        // Raum 1
-        Inventory inventory = new Inventory();
-        inventory.getItems().add(new ToggleItem(1, Item.FACKEL, "Du betrachtest die Fackel. Wie kann man die wohl anzünden?", "Du zündest deine Fackel mit dem Feuerzeug an.", true, false));
-        inventory.getItems().add(new Item(2, Item.HANDTUCH, "Das Handtuch sieht sehr flauschig aus.", "Du wischst dir den Angstschweiß von der Stirn.", true));
-        inventory.getItems().add(new ToggleItem(3, Item.SCHALTER, "Da ist ein kleiner Schalter an der Wand.", "Du hörst ein Rumpeln, als du den Schalter drückst.", false, false));
-        inventory.getItems().add(new StorageItem(4, Item.TRUHE, "Die Truhe ist verschlossen. Es sieht nicht so aus, als könnte man sie aufbrechen.", "Du kannst die Truhe nicht öffnen.", false, true, true));
-        findRaumByNummer(1).setInventory(inventory);
-
-        //Raum 2
-        inventory = new Inventory();
-        inventory.getItems().add(new Item(5, Item.STEIN, "Du betrachtest den Stein. Er wirkt kalt.", "Hier gibt es nichts um den Stein zu benutzen.", true));
-        inventory.getItems().add(new Item(6, Item.SCHWERT, "Du betrachtest das Schwert. Es sieht sehr scharf aus.", "Du stichst dir das Schwert zwischen die Rippen und stirbst.", true));
-        inventory.getItems().add(new Item(7, Item.FEUERZEUG, "Du betrachtest das Feuerzeug. Es wirkt zuverlässig.", "Du zündest deine Fackel mit dem Feuerzeug an.", true));
-        findRaumByNummer(2).setInventory(inventory);
-
-        //Raum 3
-        inventory = new Inventory();
-        inventory.getItems().add(new Item(8, Item.FALLTÜR, "Da ist eine Falltür", "Du schlüpfst durch die Falltür in den darunterliegenden Raum.", false));
-        inventory.getItems().add(new Item(9, Item.WHITEBOARD, "Es steht \'FLIEH!\' mit Blut geschrieben darauf.", "Das fasse ich bestimmt nicht an!", false));
-        inventory.getItems().add(new Item(10, Item.BRECHEISEN, "Da ist ein Brecheisen, es ist \"Gordon\" eingeritzt.", "Du kratzt dich mit dem Brecheisen am Kopf", true));
-        inventory.getItems().add(new Item(11, Item.QUIETSCHEENTE, "Die Ente schaut dich vorwurfsvoll an.", "Die Ente schaut dich vorwurfsvoll an und quietscht leise, als du sie zusammendrückst.", true));
-        findRaumByNummer(3).setInventory(inventory);
-
-        //Raum 4
-        inventory = new Inventory();
-        inventory.getItems().add(new Karte(20, "Karte", "Das ist eine Karte, sie zeigt deinen Laufweg.", "Benutzetext wird bei benutzung geändert"));
-        inventory.getItems().add(new Item(12, Item.SACK, "Du betrachtest den Sack. Vielleicht kannst du ihn ja an deinem Rucksack befestigen.", "Du bindest den Sack an deinen Rucksack.", true));
-        inventory.getItems().add(new ToggleItem(21, Item.SCHALTER,"Da ist ein kleiner Schalter an der Wand.", "Du hörst ein Rumpeln, als du den Schalter drückst.", false, false));
-        findRaumByNummer(4).setInventory(inventory);
-
-        //Raum 5
-        inventory = new Inventory();
-        inventory.getItems().add(new Item(13, Item.FALLTÜR, "Da ist eine Falltür", "Du schlüpfst durch die Falltür in den darunterliegenden Raum.", false));
-        findRaumByNummer(5).setInventory(inventory);
-
-        //Raum 6
-        inventory = new Inventory();
-        inventory.getItems().add(new StorageItem(14, Item.TRUHE, "Die Truhe ist verschlossen. Es sieht nicht so aus, als könnte man sie aufbrechen.", "Du kannst die Truhe nicht öffnen.", false, true, false));
-        findRaumByNummer(6).setInventory(inventory);
-
-        //Raum 7
-        inventory = new Inventory();
-        inventory.getItems().add(new ToggleItem(15, Item.SCHALTER, "Da ist ein kleiner Schalter an der Wand.", "Du hörst ein Rumpeln, als du den Schalter drückst.", false, false));
-        findRaumByNummer(7).setInventory(inventory);
-
-        //Truhe Raum1
-        truhe = (StorageItem) findRaumByNummer(1).getInventory().findItemByName("Truhe");
-        inventory = new Inventory();
-        //inventory.getItems().add();
-        //TODO Items einfügen
-        //inventory.getItems().add();
-        truhe.setInventory(inventory);
-
-        //Truhe Raum 6
-        truhe = (StorageItem) findRaumByNummer(6).getInventory().findItemByName("Truhe");
-        inventory = new Inventory();
-        inventory.getItems().add(new Item(19, "Axt", "Eine scharfe Axt.", "Du schlägst mit der Axt zu.", true));
-        truhe.setInventory(inventory);
-    }
-
-    public void initDoors() {
-        Door door;
-        ArrayList<Door> doors;
-        // Raum 1
-        doors = new ArrayList<>();
-        door = new Door(1, Richtung.SUED, 2, false);
-        doors.add(door);
-        door = new Door(2, Richtung.WEST, 4, true);
-        doors.add(door);
-        findRaumByNummer(1).setDoors(doors);
-
-        //Raum 2
-        doors = new ArrayList<>();
-        door = new Door(3, Richtung.NORD, 1, false);
-        doors.add(door);
-        door = new Door(4, Richtung.WEST, 3, false);
-        doors.add(door);
-        findRaumByNummer(2).setDoors(doors);
-
-        //Raum 3
-        doors = new ArrayList<>();
-        door = new Door(5, Richtung.OST, 2, false);
-        doors.add(door);
-        door = new Door(9, Richtung.FALLTUER, 4, false); //FIXME noch eine normale Tür
-        doors.add(door);
-        findRaumByNummer(3).setDoors(doors);
-
-        // Raum 4
-        doors = new ArrayList<>();
-        door = new Door(6, Richtung.NORD, 7, true);
-        doors.add(door);
-        door = new Door(7, Richtung.OST, 1, true);
-        doors.add(door);
-        door = new Door(8, Richtung.WEST, 5, false);
-        doors.add(door);
-        findRaumByNummer(4).setDoors(doors);
-
-        // Raum 5
-        doors = new ArrayList<>();
-        door = new Door(9, Richtung.OST, 4, false);
-        doors.add(door);
-        door = new Door(10, Richtung.FALLTUER, 6, false);
-        doors.add(door);
-        findRaumByNummer(5).setDoors(doors);
-
-
-        //Raum 6
-        doors = new ArrayList<>();
-        //Tür erst gesetzt wenn Axt in Raum 6 benutzt
-        findRaumByNummer(6).setDoors(doors);
-
-
-        //Raum 7
-        doors = new ArrayList<>();
-        door = new Door(12, Richtung.WEST, 6, false);
-        doors.add(door);
-        door = new Door(13, Richtung.SUED, 4, true);
-        doors.add(door);
-        findRaumByNummer(7).setDoors(doors);
-    }
-
-    private void initHumans() {
-        findRaumByNummer(4).setHuman(new Human(
-                "Gordon", "Hast du die Truhe gesehen? Ich frage mich, was da wohl drin ist...", "...",
-                "Ich suche ein Brecheisen. Hast du eins?", "Sehr gut. Danke dir.",
-                new Item(16, Item.SCHLÜSSEL, "Du betrachtest den Schlüssel. Was kann man damit wohl aufschließen?", "Hier gibt es nichts um den Schlüssel zu benutzen.", true), "Brecheisen"));
-        findRaumByNummer(5).setHuman(new Human(
-                "Junge", "", "",
-                "Hast du ein Handtuch ?", "Danke.",
-
-                new Item(17, "Brief", "Ein Brief adressiert an eine Frau.", "Bringe den Brief zu einer Frau.", true),
-
-                "Handtuch"));
-        findRaumByNummer(7).setHuman(new Human(
-                "Frau", "", "",
-                "Hast du einen Brief?", "Danke",
-
-                new Item(18, "Seil", "Ein stabiles Seil.", "Du seilst dich ab.", true), "Brief"));
-    }
-    */
 
     /**
      * @return Returns the current room.
      */
-    public Raum getCurrentRaum() {
-    	
-    	if (raums == null || raums.size() <= 0) {
-    		return null;
-    	}
-    	
-        for (Raum raum : raums) {
-            if (raum.roomNumber == this.currentRoomNumber) {
-                return raum;
+    public Room getCurrentRoom() {
+
+        if (rooms == null || rooms.size() <= 0) {
+            return null;
+        }
+
+        for (Room room : rooms) {
+            if (room.roomNumber == this.currentRoomNumber) {
+                return room;
             }
         }
-        return raums.get(0);
+        return rooms.get(0);
     }
 
     /**
      * Helps you finding a room by it's number.
      *
-     * @param raumNummer The number of the room you're searching
+     * @param roomNumber The number of the room you're searching
      * @return Returns the room you're searching.
      */
-    public Raum findRaumByNummer(int raumNummer) {
-        for (Raum raum : raums) {
-            if (raum.roomNumber == raumNummer) {
-                return raum;
+    public Room findRoomByNumber(int roomNumber) {
+        for (Room room : rooms) {
+            if (room.roomNumber == roomNumber) {
+                return room;
             }
         }
         return null;
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
     /**
      * Walking routine.
      *
-     * @param richtung The direction you want to go
+     * @param direction The direction you want to go
      * @return Returns the room you'll get into or null if there isn't any room in this direction.
      */
-    public Raum getRaum(Richtung richtung) {
-        Raum currentRaum = getCurrentRaum();
-        Door door = currentRaum.findDoorByDirection(richtung);
+    public Room getRoom(Direction direction) {
+        Room currentRoom = getCurrentRoom();
+        Door door = currentRoom.findDoorByDirection(direction);
         if (door == null) {
-            Textie.printText("Diese Richtung gibt es nicht.");
+            Textie.printText("Diese Richtung gibt es nicht.", this);
 
         } else {
-            Raum nextRoom = currentRaum.getNextRoom(door);
-            if (nextRoom != null) {
-                    /*
-                    Hier Räume mit deren Nummern aufführen, die eine per Knopf verschlossene Tür haben
-                    if(richtung == Richtung.RICHTUNG_IN_DER_DIE_TÜR_LIEGT){
-                    checkSchalter(dungeon, richtung);
-                    }
-                    */
+            Room nextRoom = currentRoom.getNextRoom(door);
+            if (nextRoom == null) {
+                Textie.printText("Du bist gegen die Wand gelaufen.", this);
+            } else {
+
                 if (door.isLocked() == true) {
-                    currentRaum.setLeaveRoom(false);
-                    Textie.printText("Tür verschlossen.");
+                    currentRoom.setLeaveRoom(false);
+                    Textie.printText("Tür verschlossen.", this);
                 } else {
-                    Textie.printText("Du öffnest die Tür");
+                    Textie.printText("Du öffnest die Tür", this);
                     currentRoomNumber = nextRoom.getRoomNumber();
-                    currentRaum.setLeaveRoom(true);
+                    currentRoom.setLeaveRoom(true);
 
                     //previousRoomNumber = raums.indexOf(currentRaum);
-                    Karte karte;
-                    if (dungeon.player.getInventory().findItemByName("Karte") != null) {
-                        karte = (Karte) dungeon.player.getInventory().findItemByName("Karte");
-                        karte.writeMap(currentRaum.getRoomNumber(), door.getRichtung().toString());
-                    } else if (dungeon.findRaumByNummer(4).getInventory().findItemByName("Karte") != null) {
-                        karte = (Karte) dungeon.findRaumByNummer(4).getInventory().findItemByName("Karte");
-                        karte.writeMap(currentRaum.getRoomNumber(), door.getRichtung().toString());
+                    Map map;
+                    if (this.player.getInventory().findItemByName("Karte") != null) {
+                        map = (Map) this.player.getInventory().findItemByName("Karte");
+                        map.writeMap(currentRoom.getRoomNumber(), door.getDirection().toString());
+                    } else if (this.findRoomByNumber(4).getInventory().findItemByName("Karte") != null) {
+                        map = (Map) this.findRoomByNumber(4).getInventory().findItemByName("Karte");
+                        map.writeMap(currentRoom.getRoomNumber(), door.getDirection().toString());
                     }
                     return getNextRoom(currentRoomNumber);
                 }
-            } else {
-                Textie.printText("Du bist gegen die Wand gelaufen.");
             }
         }
         return null;
@@ -418,25 +334,25 @@ public class Dungeon implements Serializable {
      *
      * @param currentRoomNumber The number of the current room.
      * @return Returns the new room.
-     * @see Dungeon#findRaumByNummer(int)
+     * @see Dungeon#findRoomByNumber(int)
      */
-    private Raum getNextRoom(int currentRoomNumber) {
-        for (Raum raum : raums) {
-            if (raum.roomNumber == currentRoomNumber) {
-                return raum;
+    private Room getNextRoom(int currentRoomNumber) {
+        for (Room room : rooms) {
+            if (room.roomNumber == currentRoomNumber) {
+                return room;
             }
         }
-        return raums.get(0);
+        return rooms.get(0);
     }
 
     /**
      * @return Returns the state of the switch.
      */
-    private static boolean checkSchalter() {
-        if (Textie.chooseInventory("Schalter").isToggle()) {
-            ToggleItem schalter = (ToggleItem) Textie.chooseInventory("Schalter");
+    public boolean checkSchalter() {
+        if (Textie.chooseInventory("Schalter", this).isToggle()) {
+            ToggleItem schalter = (ToggleItem) Textie.chooseInventory("Schalter", this);
             if (schalter.getState() == false) {
-                Textie.printText("Da ist eine Tür, du versuchst sie zu öffnen, doch es geht nicht.");
+                Textie.printText("Da ist eine Tür, du versuchst sie zu öffnen, doch es geht nicht.", this);
                 return false;
             } else {
                 return true;
@@ -445,27 +361,16 @@ public class Dungeon implements Serializable {
         return false;
     }
 
-    public void setRoomNumber(Raum raum) {
-        this.currentRoomNumber = raums.indexOf(raum) + 1;
-    }
-
-    /**
-     * Sets the world you play in
-     * It's for savegamestuff
-     *
-     * @param dungeon The world object
-     */
-    public static void setDungeon(Dungeon dungeon) {
-        Dungeon.dungeon = dungeon;
-
+    public void setRoomNumber(Room room) {
+        this.currentRoomNumber = rooms.indexOf(room) + 1;
     }
 
     public void setPlayer(Player player) {
         this.player = player;
     }
 
-    public List<Raum> getRooms() {
-        return raums;
+    public List<Room> getRooms() {
+        return rooms;
     }
 
     public Player getPlayer() {
@@ -475,5 +380,148 @@ public class Dungeon implements Serializable {
     //TODO
     public HashMap<ToggleItem, Door> getDoorSchalter() {
         return doorSchalter;
+    }
+
+    /**
+     * Lets you inspect an item.
+     *
+     * @param parsed_command The String[]
+     * @param count          THe size of the String[]
+     */
+    public void doExamine(String[] parsed_command, int count) {
+        if (count != 2) {
+            Textie.printText("Was soll untersucht werden?", this);
+        } else {
+            switch (parsed_command[1].toLowerCase()) {
+                case "raum":
+                    getCurrentRoom().examine(this);
+                    break;
+                case "inventar":
+                    if (getCurrentRoom() instanceof DarkRoom) {
+                        Item item = this.getPlayer().getInventory().findItemByName("Fackel");
+                        if (item == null) {
+                            Textie.printText("Du kannst nichts sehen!", this);
+                        }
+                        if (item instanceof ToggleItem) {
+                            ToggleItem fackel = (ToggleItem) item;
+                            if (fackel.getState() == false) {
+                                Textie.printText("Du kannst nichts sehen!", this);
+                            } else {
+                                Textie.printText("In deiner Tasche befindet sich:", this);
+                                this.getPlayer().getInventory().listItems(this);
+                            }
+                        }
+                    } else {
+                        Textie.printText("In deiner Tasche befindet sich:", this);
+                        this.getPlayer().getInventory().listItems(this);
+                    }
+                    break;
+                case "truhe":
+                    if (this.getCurrentRoom().getInventory().hasItem("Truhe") == false) {
+                        Textie.printText("Hier ist keine Truhe", this);
+                    } else {
+                        StorageItem truhe = (StorageItem) this.getCurrentRoom().getInventory().findItemByName("Truhe");
+                        truhe.examine(this);
+                    }
+                    break;
+                default:
+                    Item item = Textie.chooseInventory(parsed_command[1], this);
+                    if (item == null) {
+                        Textie.printText("Das Objekt gibt es nicht.", this);
+                    } else {
+                        item.examine(item, this);
+                    }
+            }
+        }
+    }
+
+
+    /**
+     * Let's you take stuff from a chest.
+     *
+     * @param item The item to take.
+     */
+    public void doTakeFromChest(Item item) {
+        if (item.isPickable() == true) {
+            if (addItemFromChestToInventory(item, this)) {
+
+                Textie.printText(item.getName() + " zum Inventar hinzugefügt.", this);
+            } else {
+                Textie.printText("Entweder das Objekt gibt es nicht, oder dein Inventar ist voll.", this);
+            }
+        } else {
+            Textie.printText("Du kannst dieses Item nicht aufheben.", this);
+        }
+    }
+
+    /**
+     * Pick up an item from the floor.
+     *
+     * @param item The item to pick up.
+     */
+    public void doTake(Item item) {
+        if (item == null) {
+            Textie.printText("Unbekanntes Item.", this);
+        } else {
+            if (item.isPickable() == true) {
+                if (this.getCurrentRoom().getInventory().transferItem(this.getPlayer().getInventory(), item)) {
+
+                    Textie.printText(item.getName() + " zum Inventar hinzugefügt.", this);
+                } else {
+                    Textie.printText("Entweder das Objekt gibt es nicht, oder dein Inventar ist voll.", this);
+                }
+            } else {
+                Textie.printText("Du kannst dieses Item nicht aufheben.", this);
+            }
+        }
+    }
+
+    /**
+     * Give someone an item.
+     *
+     * @param parsed_command The String[]
+     * @param count          The size of the String[]
+     */
+    public void doGive(String[] parsed_command, int count) {
+        if (count == 2) {
+            String itemToUse = IOUtils.convertToName(parsed_command[1]);
+            //Item itemToUse = chooseInventory(parsed_command[1]);
+            if (itemToUse.equals(this.getCurrentRoom().getHuman().getQuestItem())) {
+                Item item = Textie.chooseInventory(parsed_command[1], this);
+                boolean isRemoved = this.getPlayer().getInventory().removeItem(item);
+                if (isRemoved == true) {
+                    Textie.printText(this.getCurrentRoom().getHuman().getQuestDoneText(), this);
+                    this.getCurrentRoom().getHuman().setQuestDone(true);
+                    if (Textie.recieveItem(this.getCurrentRoom().getHuman().getRewarditem(), player.getInventory())) {
+                        Textie.printText("Im Gegenzug bekommst du von mir auch etwas. Bitteschön.", this);
+                    } else {
+                        Textie.printText("Dein Inventar ist leider voll. Komm wieder, wenn du Platz hast.", this);
+                        this.getCurrentRoom().getHuman().setGaveItem(true);
+                    }
+                } else {
+                    Textie.printText("Item nicht im Inventar.", this);
+                }
+            } else {
+                Textie.printText("Das brauche ich nicht.", this);
+            }
+        } else {
+            Textie.printText("Zu wenig Argumente", this);
+        }
+    }
+
+    /**
+     * Best name ever.
+     *
+     * @param item Item to take.
+     * @return Returns true, if you can pick up the item.
+     */
+    private static boolean addItemFromChestToInventory(Item item, Dungeon dungeon) {
+        StorageItem dieTruhe = (StorageItem) dungeon.getCurrentRoom().getInventory().findItemByName("Truhe");
+        if (dungeon.getPlayer().getInventory().getSize() < dungeon.getPlayer().getInventory().getMaxSlots() && dieTruhe.getInventory().hasItem(item.getName())) {
+            dieTruhe.getInventory().transferItem(dungeon.getPlayer().getInventory(), item);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

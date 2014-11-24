@@ -3,7 +3,7 @@ package de.micromata.azubi;
 import java.io.*;
 
 /**
- * @author Lukas F&uuml;lling (l.fuelling@micromata.de)
+ * @author Lukas Füllimg (l.fuelling@micromata.de)
  * @version 1.2
  */
 public class IOUtils {
