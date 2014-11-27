@@ -17,7 +17,7 @@ import java.net.UnknownHostException;
  */
 @Path("textie")
 public class Receiver {
-//private Dungeon dungeon = Dungeon.createDungeon();
+private Dungeon dungeon = Dungeon.createDungeon();
   /**
    * Method handling HTTP GET requests. The returned object will be sent
    * to the client as "text/plain" media type.
@@ -29,7 +29,7 @@ public class Receiver {
   @Produces("text/plain")
   public String handleInput(String input) {
     connect();
-    /*Textie.diag = false;
+    Textie.diag = false;
     Textie.webapp = true;
     Textie.lastPrintedText = "";
     String[] parsedargs = {""};
@@ -41,8 +41,7 @@ public class Receiver {
         parsedargs, dungeon);
     Thread.yield();
 
-    return Textie.lastPrintedText;*/
-          return "hallo";
+    return Textie.lastPrintedText;
   }
 
 

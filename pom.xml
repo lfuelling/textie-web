@@ -42,6 +42,17 @@
         </dependencies>
     </dependencyManagement>
 
+    <repositories>
+        <repository>
+            <id>textie-mvn-repo</id>
+            <url>https://raw.github.com/lfuelling/textie/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
@@ -57,6 +68,11 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>de.micromata.azubi</groupId>
+            <artifactId>textie</artifactId>
+            <version>4.0-WEBAPP</version> <!-- Because we DO need the webapp mods -->
         </dependency>
         <dependency>
             <!-- note: typically only ".0" patch version exists for core annotations -->
