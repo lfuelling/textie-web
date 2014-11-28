@@ -12,23 +12,21 @@ import de.micromata.azubi.model.Dungeon;
 import java.net.UnknownHostException;
 
 
-/**
- * Root resource (exposed at "myresource" path)
- */
 @Path("textie")
 public class Receiver {
 private Dungeon dungeon = Dungeon.createDungeon();
-  /**
-   * Method handling HTTP GET requests. The returned object will be sent
-   * to the client as "text/plain" media type.
-   *
-   * @return String that will be returned as a text/plain response.
-   */
+
   @POST
+  @Path("command")
   @Consumes("text/plain")
   @Produces("text/plain")
   public String handleInput(String input) {
-    connect();
+    try {
+      DBUtils.connect();
+    } catch(UnknownHostException e) {       //TODO: Brauchen wir die Datenbank hier wirklich?
+      e.printStackTrace();
+      return "false";
+    }
     Textie.diag = false;
     Textie.webapp = true;
     Textie.lastPrintedText = "";
@@ -45,22 +43,7 @@ private Dungeon dungeon = Dungeon.createDungeon();
   }
 
 
-  public void connect() {
-    MongoClient mongoClient = null;
-    try {
-      mongoClient = new MongoClient();
-    } catch (UnknownHostException e) {
-      e.printStackTrace();
-    }
-    DB db = mongoClient.getDB( "textieWeb" );
 
-    String name = "Test";
-    String config = "";
-    DBCollection coll = db.getCollection("userConfigs");
-    DBObject test = coll.findOne();
-
-
-  }
 
 
 
