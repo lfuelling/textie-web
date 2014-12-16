@@ -65,7 +65,7 @@
         if (pass == pass2) {
             var passenc = $.sha1(pass);
             $.ajax({
-                url: "webapi/register",
+                url: "webapi/auth/register",
                 type: "POST",
                 data: {"email": $("#email").val(), "pass": passenc},
                 contentType: "text/plain; charset=utf-8",
