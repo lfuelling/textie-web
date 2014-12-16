@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
  * Hier sind alle Datenbankfunktionen drin.
  *
  * @author Lukas F&uuml;lling (l.fuelling@micromata.de)
+ * @authod Julian Siebert (j.siebert@micromata.de)
  */
 public class DBUtils {
 
