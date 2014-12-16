@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
  */
 public class DBUtils {
 
-  public static DBCollection getConfigCollection(String collectionName) {
+  public static DBCollection getCollection(String collectionName) {
     MongoClient mongoClient = null;
     try {
       mongoClient = new MongoClient();
@@ -27,7 +27,7 @@ public class DBUtils {
 
   public static Object getStandardConfig(String username) {
     DBObject query = new BasicDBObject("user", username);
-    DBObject data = getConfigCollection("userConfigs").findOne(query);
+    DBObject data = getCollection("userConfigs").findOne(query);
 
     if (data == null) {
       return null;
@@ -37,10 +37,10 @@ public class DBUtils {
 
   }
 
-  public static Object getStandardConfig(String username, int slot) {
+  public static Object getConfig(String username, int slot) {
     DBObject query = new BasicDBObject("user", username);
     query.put("slot", String.valueOf(slot));
-    DBObject data = getConfigCollection("altConfigs").findOne(query);
+    DBObject data = getCollection("altConfigs").findOne(query);
 
     if (data == null) {
       return null;
@@ -50,21 +50,31 @@ public class DBUtils {
 
   }
 
-  public static void updateConfig(String username, String slot, String config){
+  public static void updateConfig(String username, int slot, String config){
     DBObject updateData = new BasicDBObject("user", username);
-    updateData.put("slot", slot);
+    updateData.put("slot", String.valueOf(slot));
     updateData.put("config", config);
+    updateData.put("savegame", "");
     DBObject query = new BasicDBObject("user", username);
     query.put("slot", slot);
-    //DBObject result = getConfigCollection("altConfigs").findOne(query);
-
-            getConfigCollection("altConfigs").update(query, updateData, true, false);
+    getCollection("altConfigs").update(query, updateData, true, false);
 
   }
+
+  public static void updateSavegame(String username, int slot, String savegame){
+    DBObject updateData = new BasicDBObject("user", username);
+    updateData.put("slot", String.valueOf(slot));
+    updateData.put("config", getConfig(username, slot));
+    updateData.put("savegame", savegame);
+    DBObject query = new BasicDBObject("user", username);
+    query.put("slot", slot);
+    getCollection("altConfig").update(query, updateData, true, false);
+  }
+
 
   public static String getPassword(String username){
 
-    DBObject result = getConfigCollection("userConfigs").findOne(username);
+    DBObject result = getCollection("userConfigs").findOne(username);
     return (String) result.get("password");
   }
 
@@ -422,7 +432,7 @@ public class DBUtils {
 
 
     DBObject query = new BasicDBObject("name", name);
-    DBObject data = getConfigCollection("userConfigs").findOne(query);
+    DBObject data = getCollection("userConfigs").findOne(query);
 
     if (data != null) {
       return "Es existiert schon ein Benutzer mit dem Namen \"" + name + "\".";
@@ -430,7 +440,7 @@ public class DBUtils {
       BasicDBObject doc = new BasicDBObject("user", name)
               .append("password", password)
               .append("config", standardConfig);
-      getConfigCollection("userConfigs").insert(doc);
+      getCollection("userConfigs").insert(doc);
       return "Benutzer \"" + name + "\" wurde angelegt.";
     }
   }
