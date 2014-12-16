@@ -13,24 +13,22 @@ import java.net.UnknownHostException;
 import java.sql.Array;
 
 
-/**
- * Root resource (exposed at "myresource" path)
- */
 @Path("textie")
 public class Receiver {
-//private Dungeon dungeon = Dungeon.createDungeon();
-  /**
-   * Method handling HTTP GET requests. The returned object will be sent
-   * to the client as "text/plain" media type.
-   *
-   * @return String that will be returned as a text/plain response.
-   */
+private Dungeon dungeon = Dungeon.createDungeon();
+
   @POST
+  @Path("command")
   @Consumes("text/plain")
   @Produces("text/plain")
   public String handleInput(String input) {
-    connect();
-    /*Textie.diag = false;
+    try {
+      DBUtils.connect();
+    } catch(UnknownHostException e) {       //TODO: Brauchen wir die Datenbank hier wirklich?
+      e.printStackTrace();
+      return "false";
+    }
+    Textie.diag = false;
     Textie.webapp = true;
     Textie.lastPrintedText = "";
     String[] parsedargs = {""};
@@ -42,8 +40,7 @@ public class Receiver {
         parsedargs, dungeon);
     Thread.yield();
 
-    return Textie.lastPrintedText;*/
-          return "hallo";
+    return Textie.lastPrintedText;
   }
 
 
@@ -54,7 +51,7 @@ public class Receiver {
     } catch (UnknownHostException e) {
       e.printStackTrace();
     }
-    DB db = mongoClient.getDB( "textieWeb" );
+    DB db = mongoClient.getDB("textieWeb");
 
     String name = "Test";
     String config = "";
@@ -69,15 +66,6 @@ public class Receiver {
 
     data.get("config");
 
-
-
   }
-
-
-
-
-
-
-
 
 }
