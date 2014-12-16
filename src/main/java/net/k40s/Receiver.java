@@ -10,6 +10,7 @@ import de.micromata.azubi.Textie;
 import de.micromata.azubi.model.Dungeon;
 
 import java.net.UnknownHostException;
+import java.sql.Array;
 
 
 /**
@@ -57,8 +58,17 @@ public class Receiver {
 
     String name = "Test";
     String config = "";
+
+    BasicDBObject query = new BasicDBObject("user", name);
     DBCollection coll = db.getCollection("userConfigs");
-    DBObject test = coll.findOne();
+
+
+    DBCursor test = coll.find(query);
+
+    DBObject data = test.curr();
+
+    data.get("config");
+
 
 
   }
