@@ -14,6 +14,15 @@ import java.net.UnknownHostException;
 public class Auth {
 
   @POST
+  @Path("restore")
+  @Consumes("text/plain")
+  @Produces("text/plain")
+  public String restore(String input){ // TODO: Input = USERNAME&PASSENC (Wie im Beispiellogin)
+    //TODO: Datenbankverbindung
+    return ""; // TODO: Soll Token zurückgeben
+  }
+
+  @POST
   @Path("login")
   @Consumes("text/plain")
   @Produces("text/plain")

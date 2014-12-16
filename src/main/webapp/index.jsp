@@ -65,17 +65,26 @@
       $("#loginform").fadeIn("slow").show();
     } else {
       $.ajax({
-        url: "webapi/login/restore",
+        url: "webapi/restore",
         type: "POST",
         data: token,
         contentType: "text/plain; charset=utf-8",
         dataType: "json",
+        statusCode: {
+          404: function() {
+            console.log("404 error");
+            $("#wrongpass").hide();
+            $("#loginform").fadeIn("slow").show();
+          }
+        },
         success: function (data) {
           if (data == false) {
             $("#wrongpass").hide();
             $("#loginform").fadeIn("slow").show();
           } else if (data == true) {
             window.location.href = "main.jsp";
+          } else {
+            console.log("no connection to api.");
           }
         }
       })
