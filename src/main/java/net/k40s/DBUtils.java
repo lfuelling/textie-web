@@ -2,6 +2,7 @@ package net.k40s;
 
 import com.mongodb.*;
 import net.k40s.exceptions.DatabaseNotFoundException;
+import net.k40s.exceptions.UsernameAlreadyTakenException;
 
 import java.net.UnknownHostException;
 
@@ -74,7 +75,7 @@ public class DBUtils {
     return (String) result.get("password");
   }
 
-  public static String createUser(String name, String password) {
+  public static void createUser(String name, String password) throws UsernameAlreadyTakenException {
 
     final String standardConfig = "[\n" +
             "  {\n" +
@@ -431,13 +432,12 @@ public class DBUtils {
     DBObject data = getConfigCollection("userConfigs").findOne(query);
 
     if (data != null) {
-      return "Es existiert schon ein Benutzer mit dem Namen \"" + name + "\".";
+            throw new UsernameAlreadyTakenException(name);
     } else {
       BasicDBObject doc = new BasicDBObject("user", name)
               .append("password", password)
               .append("config", standardConfig);
       getConfigCollection("userConfigs").insert(doc);
-      return "Benutzer \"" + name + "\" wurde angelegt.";
     }
   }
 

@@ -2,6 +2,7 @@ package net.k40s;
 
 
 import de.micromata.azubi.Consts;
+import net.k40s.exceptions.UsernameAlreadyTakenException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -65,9 +66,22 @@ public class Auth {
   @Path("register")
   @Consumes("text/plain")
   @Produces("text/plain")
-  public String register(String input) { // TODO: Input = USERNAME&PASSENC (Wie im Beispiellogin)
-    //TODO: Datenbankverbindung
-    return ""; // TODO: Soll True/False zurück geben zurückgeben.
+  public String register(String input) {
+
+    String email;
+    String pass;
+
+    String[] pi = StringUtils.parseLogin(input);
+    email = pi[0];
+    pass = pi[1];
+
+    try {
+      DBUtils.createUser(email, pass);
+    } catch(UsernameAlreadyTakenException e) {
+      System.out.println(e.getMessage());
+      return "false";
+    }
+    return "true";
   }
 
 
