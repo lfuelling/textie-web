@@ -47,7 +47,7 @@ public class Auth {
   @Produces("text/plain")
   public String register(String input) { // TODO: Input = USERNAME&PASSENC (Wie im Beispiellogin)
     //TODO: Datenbankverbindung
-    return ""; // TODO: Soll Token zurückgeben.
+    return ""; // TODO: Soll True/False zurück geben zurückgeben.
   }
 
 
