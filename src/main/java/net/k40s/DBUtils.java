@@ -409,16 +409,16 @@ public class DBUtils {
    * @param slot Speicherslot
    * @return Die gesuchte Konfiguration
    */
-  public static Object getConfig(String username, int slot) {
+  public static String getConfig(String username, int slot) {
     DBObject query = new BasicDBObject("user", username);
     query.put("slot", String.valueOf(slot));
-    DBObject data = getCollection("altConfigs").findOne(query);
+    DBObject data = getCollection("configs").findOne(query);
 
     if (data == null) {
       return null;
     } else {
     }
-    return data.get("config");
+    return (String) data.get("config");
 
   }
 
@@ -436,7 +436,7 @@ public class DBUtils {
     updateData.put("savegame", "");
     DBObject query = new BasicDBObject("user", username);
     query.put("slot", slot);
-    getCollection("altConfigs").update(query, updateData, true, false);
+    getCollection("configs").update(query, updateData, true, false);
 
   }
 
@@ -453,7 +453,7 @@ public class DBUtils {
     updateData.put("savegame", savegame);
     DBObject query = new BasicDBObject("user", username);
     query.put("slot", slot);
-    getCollection("altConfig").update(query, updateData, true, false);
+    getCollection("configs").update(query, updateData, true, false);
   }
 
   /**
@@ -508,6 +508,13 @@ public class DBUtils {
     getCollection("users").update(getCollection("users").findOne(name), updateData);
   }
 
-
+  /*
+  public static String getConfig(String username, int slot){
+    BasicDBObject query= new BasicDBObject("user", username);
+    DBObject result = getCollection("configs").findOne(query);
+    String data = (String) result.get("config");
+    return data;
+  }
+  */
 
 }

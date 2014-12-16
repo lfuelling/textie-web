@@ -25,6 +25,7 @@ public class Auth {
   @Produces("text/plain")
   public String restore(String input){ // TODO: Input = USERNAME&PASSENC (Wie im Beispiellogin)
     //TODO: Datenbankverbindung
+    DBUtils.login("blablablablasbSDJSKD");             //Namen setzen. Wo wollen wir den Token generieren?
     return ""; // TODO: Soll Token zurückgeben
   }
 
@@ -43,6 +44,7 @@ public class Auth {
     pass = pi[1];
 
     //TODO: Database stuff...
+    DBUtils.login(email);             //email durch namen ersetzen. Wo wollen wir den Token generieren?
 
     if(true == false/* TODO: PASSWORT RICHTIG */){
       return token;
@@ -59,6 +61,7 @@ public class Auth {
   @Produces("text/plain")
   public String logout(String input) { //TODO: Input = Token&ID
     //TODO: Datenbankverbindung
+    //DBUtils.logout(username);                     der benutzername muss in allen seiten abrufbar sein
     return ""; // TODO: Soll True/False zurückgeben.
   }
 
