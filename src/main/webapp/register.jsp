@@ -56,6 +56,7 @@
     $(document).ready(function () {
         $("#wrongpass").hide();
         $("#useralready").hide();
+        $("#loginform").fadeIn("slow").show();
     });
     $("#subbtn").click(function (event) {
         event.preventDefault();
