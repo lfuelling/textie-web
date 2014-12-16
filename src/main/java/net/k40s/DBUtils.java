@@ -1,6 +1,7 @@
 package net.k40s;
 
 import com.mongodb.*;
+import net.k40s.exceptions.DatabaseNotFoundException;
 
 import java.net.UnknownHostException;
 
@@ -18,9 +19,14 @@ public class DBUtils {
     } catch (UnknownHostException e) {
       e.printStackTrace();
     }
-    DB db = mongoClient.getDB("textieWeb");
+          DB db = null;
+          if(mongoClient != null) {
+                  db = mongoClient.getDB("textieWeb");
+          } else {
+                  throw new DatabaseNotFoundException("Database not found.");
+          }
 
-    DBCollection coll = db.getCollection(collectionName);
+          DBCollection coll = db.getCollection(collectionName);
 
     return coll;
   }
