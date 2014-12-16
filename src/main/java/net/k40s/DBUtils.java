@@ -10,10 +10,15 @@ import java.net.UnknownHostException;
  * Hier sind alle Datenbankfunktionen drin.
  *
  * @author Lukas F&uuml;lling (l.fuelling@micromata.de)
- * @authod Julian Siebert (j.siebert@micromata.de)
+ * @author Julian Siebert (j.siebert@micromata.de)
  */
 public class DBUtils {
 
+  /**
+   * Holt sich die Collection mit gegebenem Namen aus der DB
+   * @param collectionName Name der Collection
+   * @return die Collection
+   */
   public static DBCollection getCollection(String collectionName) {
     MongoClient mongoClient = null;
     try {
@@ -33,8 +38,12 @@ public class DBUtils {
     return coll;
   }
 
-  public static Object getStandardConfig(String username) {
-    DBObject query = new BasicDBObject("user", username);
+  /**
+   * Holt die Standardkonfiguration
+   * @return Die Standardkonfiguration
+   */
+  public static Object getStandardConfig() {
+    DBObject query = new BasicDBObject("user", "Standard");
     DBObject data = getCollection("userConfigs").findOne(query);
 
     if (data == null) {
@@ -42,52 +51,7 @@ public class DBUtils {
     } else {
     }
     return data.get("config");
-
-  }
-
-  public static Object getConfig(String username, int slot) {
-    DBObject query = new BasicDBObject("user", username);
-    query.put("slot", String.valueOf(slot));
-    DBObject data = getCollection("altConfigs").findOne(query);
-
-    if (data == null) {
-      return null;
-    } else {
-    }
-    return data.get("config");
-
-  }
-
-  public static void updateConfig(String username, int slot, String config){
-    DBObject updateData = new BasicDBObject("user", username);
-    updateData.put("slot", String.valueOf(slot));
-    updateData.put("config", config);
-    updateData.put("savegame", "");
-    DBObject query = new BasicDBObject("user", username);
-    query.put("slot", slot);
-    getCollection("altConfigs").update(query, updateData, true, false);
-
-  }
-
-  public static void updateSavegame(String username, int slot, String savegame){
-    DBObject updateData = new BasicDBObject("user", username);
-    updateData.put("slot", String.valueOf(slot));
-    updateData.put("config", getConfig(username, slot));
-    updateData.put("savegame", savegame);
-    DBObject query = new BasicDBObject("user", username);
-    query.put("slot", slot);
-    getCollection("altConfig").update(query, updateData, true, false);
-  }
-
-
-  public static String getPassword(String username){
-
-    DBObject result = getCollection("userConfigs").findOne(username);
-    return (String) result.get("password");
-  }
-
-  public static void createUser(String name, String password) throws UsernameAlreadyTakenException {
-
+    /* man könnte auch einfach das hier zurückgeben :D
     final String standardConfig = "[\n" +
             "  {\n" +
             "    \"class\": \"de.micromata.azubi.model.Room\",\n" +
@@ -436,9 +400,80 @@ public class DBUtils {
             "      }\n" +
             "    ]\n" +
             "  }\n" +
-            "]";
+            "]";*/
+  }
 
+  /**
+   *
+   * @param username Benutzername des eingeloggten
+   * @param slot Speicherslot
+   * @return Die gesuchte Konfiguration
+   */
+  public static Object getConfig(String username, int slot) {
+    DBObject query = new BasicDBObject("user", username);
+    query.put("slot", String.valueOf(slot));
+    DBObject data = getCollection("altConfigs").findOne(query);
 
+    if (data == null) {
+      return null;
+    } else {
+    }
+    return data.get("config");
+
+  }
+
+  /**
+   * Ändert die Konfiguration des Benutzers mit angegebenem Slot.
+   * Achtung! Das Savegame wird gelöscht
+   * @param username
+   * @param slot
+   * @param config Die neue Konfiguration
+   */
+  public static void updateConfig(String username, int slot, String config){
+    DBObject updateData = new BasicDBObject("user", username);
+    updateData.put("slot", String.valueOf(slot));
+    updateData.put("config", config);
+    updateData.put("savegame", "");
+    DBObject query = new BasicDBObject("user", username);
+    query.put("slot", slot);
+    getCollection("altConfigs").update(query, updateData, true, false);
+
+  }
+
+  /**
+   * Ändert das Savegame. Sollte für das Speichern des Spiels verwendet werden.
+   * @param username
+   * @param slot
+   * @param savegame Das neue Savegame
+   */
+  public static void updateSavegame(String username, int slot, String savegame){
+    DBObject updateData = new BasicDBObject("user", username);
+    updateData.put("slot", String.valueOf(slot));
+    updateData.put("config", getConfig(username, slot));
+    updateData.put("savegame", savegame);
+    DBObject query = new BasicDBObject("user", username);
+    query.put("slot", slot);
+    getCollection("altConfig").update(query, updateData, true, false);
+  }
+
+  /**
+   * Holt das Passwort des angegebenen Benutzers aus der Datenbank
+   * @param username
+   * @return Das Passwort
+   */
+  public static String getPassword(String username){
+
+    DBObject result = getCollection("userConfigs").findOne(username);
+    return (String) result.get("password");
+  }
+
+  /**
+   * Legt einen neuen Benutzer an.
+   * @param name
+   * @param password
+   * @throws UsernameAlreadyTakenException
+   */
+  public static void createUser(String name, String password) throws UsernameAlreadyTakenException {
     DBObject query = new BasicDBObject("name", name);
     DBObject data = getCollection("userConfigs").findOne(query);
 
@@ -446,8 +481,8 @@ public class DBUtils {
             throw new UsernameAlreadyTakenException(name);
     } else {
       BasicDBObject doc = new BasicDBObject("user", name)
-              .append("password", password)
-              .append("config", standardConfig);
+              .append("password", password);
+              //.append("config", standardConfig);
       getCollection("userConfigs").insert(doc);
     }
   }
