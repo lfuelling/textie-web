@@ -14,13 +14,17 @@ import java.net.UnknownHostException;
 
 @Path("textie")
 public class Receiver {
-    private Dungeon dungeon = Dungeon.createDungeon();
+    //private Dungeon dungeon = Dungeon.createDungeon();
 
     @POST
     @Path("command")
     @Consumes("text/plain")
     @Produces("text/plain")
     public String handleInput(String input) {
+
+        DBUtils.updateConfig("Test2", String.valueOf(2),  "BlaBla");
+        return "BlaBlaBla";
+/*
         Textie.diag = false;
         Textie.webapp = true;
         Textie.lastPrintedText = "";
@@ -34,6 +38,6 @@ public class Receiver {
         Thread.yield();
 
         return Textie.lastPrintedText;
-
+*/
     }
 }

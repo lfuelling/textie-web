@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
  */
 public class DBUtils {
 
-  public DBCollection getConfigCollection() {
+  public static DBCollection getConfigCollection(String collectionName) {
     MongoClient mongoClient = null;
     try {
       mongoClient = new MongoClient();
@@ -20,29 +20,55 @@ public class DBUtils {
     }
     DB db = mongoClient.getDB("textieWeb");
 
-    DBCollection coll = db.getCollection("userConfigs");
+    DBCollection coll = db.getCollection(collectionName);
 
     return coll;
   }
 
-  public Object getConfig(String username) {
+  public static Object getStandardConfig(String username) {
     DBObject query = new BasicDBObject("user", username);
-
-    //DBCollection coll = getConfigCollection();
-
-    DBCursor cursor = getConfigCollection().find(query);
-    //coll.findOne(query)
-    DBObject data = getConfigCollection().findOne(query);
+    DBObject data = getConfigCollection("userConfigs").findOne(query);
 
     if (data == null) {
       return null;
     } else {
-      return data.get("config");
     }
+    return data.get("config");
 
   }
 
-  public String createUser(String name, String password) {
+  public static Object getStandardConfig(String username, int slot) {
+    DBObject query = new BasicDBObject("user", username);
+    query.put("slot", String.valueOf(slot));
+    DBObject data = getConfigCollection("altConfigs").findOne(query);
+
+    if (data == null) {
+      return null;
+    } else {
+    }
+    return data.get("config");
+
+  }
+
+  public static void updateConfig(String username, String slot, String config){
+    DBObject updateData = new BasicDBObject("user", username);
+    updateData.put("slot", slot);
+    updateData.put("config", config);
+    DBObject query = new BasicDBObject("user", username);
+    query.put("slot", slot);
+    //DBObject result = getConfigCollection("altConfigs").findOne(query);
+
+            getConfigCollection("altConfigs").update(query, updateData, true, false);
+
+  }
+
+  public static String getPassword(String username){
+
+    DBObject result = getConfigCollection("userConfigs").findOne(username);
+    return (String) result.get("password");
+  }
+
+  public static String createUser(String name, String password) {
 
     final String standardConfig = "[\n" +
             "  {\n" +
@@ -396,7 +422,7 @@ public class DBUtils {
 
 
     DBObject query = new BasicDBObject("name", name);
-    DBObject data = getConfigCollection().findOne(query);
+    DBObject data = getConfigCollection("userConfigs").findOne(query);
 
     if (data != null) {
       return "Es existiert schon ein Benutzer mit dem Namen \"" + name + "\".";
@@ -404,10 +430,12 @@ public class DBUtils {
       BasicDBObject doc = new BasicDBObject("user", name)
               .append("password", password)
               .append("config", standardConfig);
-      getConfigCollection().insert(doc);
+      getConfigCollection("userConfigs").insert(doc);
       return "Benutzer \"" + name + "\" wurde angelegt.";
     }
   }
+
+
 
 
 }

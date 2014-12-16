@@ -43,7 +43,7 @@ public class Auth {
 
     //TODO: Database stuff...
 
-    if(/* TODO: PASSWORT RICHTIG */){
+    if(true == false/* TODO: PASSWORT RICHTIG */){
       return token;
     } else {
       return "false";
