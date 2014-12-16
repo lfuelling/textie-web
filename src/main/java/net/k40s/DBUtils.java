@@ -44,7 +44,7 @@ public class DBUtils {
    */
   public static Object getStandardConfig() {
     DBObject query = new BasicDBObject("user", "Standard");
-    DBObject data = getCollection("userConfigs").findOne(query);
+    DBObject data = getCollection("users").findOne(query);
 
     if (data == null) {
       return null;
@@ -462,8 +462,7 @@ public class DBUtils {
    * @return Das Passwort
    */
   public static String getPassword(String username){
-
-    DBObject result = getCollection("userConfigs").findOne(username);
+    DBObject result = getCollection("users").findOne(username);
     return (String) result.get("password");
   }
 
@@ -475,18 +474,39 @@ public class DBUtils {
    */
   public static void createUser(String name, String password) throws UsernameAlreadyTakenException {
     DBObject query = new BasicDBObject("name", name);
-    DBObject data = getCollection("userConfigs").findOne(query);
+    DBObject data = getCollection("users").findOne(query);
 
     if (data != null) {
             throw new UsernameAlreadyTakenException(name);
     } else {
       BasicDBObject doc = new BasicDBObject("user", name)
-              .append("password", password);
+              .append("password", password)
+              .append("token", "");
               //.append("config", standardConfig);
-      getCollection("userConfigs").insert(doc);
+      getCollection("users").insert(doc);
     }
   }
 
+  public static void login(String name){
+    String token = ""; //TODO muss noch generiert werden
+    BasicDBObject updateData = new BasicDBObject("user", name)
+            .append("password", getPassword(name))
+            .append("token", token);
+
+    getCollection("users").update(getCollection("users").findOne(name), updateData);
+  }
+
+  public static String getToken(String username){
+    DBObject result = getCollection("users").findOne(username);
+    return (String) result.get("token");
+  }
+
+  public static void logout(String name){
+    BasicDBObject updateData = new BasicDBObject("user", name)
+            .append("password", getPassword(name))
+            .append("token", "");
+    getCollection("users").update(getCollection("users").findOne(name), updateData);
+  }
 
 
 
