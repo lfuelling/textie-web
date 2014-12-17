@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="img/favicon.ico">
 
-    <title>Login</title>
+    <title>Registrierung</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -27,18 +27,18 @@
 
 <div id="loginform" class="container" style="display: none">
     <div id="wrongpass" class="alert alert-danger" style="text-align: center">
-        Error. Please Try Again.
+        Fehler. Bitte erneut versuchen.
     </div>
     <div id="useralready" class="alert alert-warning" style="text-align: center">
-        Username or email already in use!
+        Diesen Nutzernamen gibt es schon!
     </div>
     <form class="form-signin" role="form">
         <h2 class="form-signin-heading">Please sign in</h2>
-        <input type="text" id="email" class="form-control" placeholder="Username" required autofocus>
-        <input type="password" id="password" class="form-control" placeholder="Password" required>
-        <input type="password" id="password2" class="form-control" placeholder="Confirm Password" required>
-        <button class="btn btn-lg btn-primary btn-block" id="subbtn" type="submit">Sign Up</button>
-        <a href="index.jsp">Sign In</a>
+        <input type="text" id="email" class="form-control" placeholder="Nutzername" required autofocus>
+        <input type="password" id="password" class="form-control" placeholder="Passwort" required>
+        <input type="password" id="password2" class="form-control" placeholder="Passwort bestätigen" required>
+        <button class="btn btn-lg btn-primary btn-block" id="subbtn" type="submit">Registrieren</button>
+        <a href="index.jsp">Hast du schon einen Account?</a>
     </form>
 </div>
 <!-- /container -->

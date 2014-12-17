@@ -41,7 +41,6 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Aktionen<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="#" data-toggle="modal" data-target="#savegameLoadModal">Savegame Laden</a></li>
-                        <li><a href="#" data-toggle="modal" data-target="#savegameSaveModal">Spielstand Speichern</a></li>
                         <li><a href="#" data-toggle="modal" data-target="#configModal">Konfiguration</a></li>
                         <li class="divider"></li>
                         <li><a href="#" id="logoutLink">Logout</a></li>
@@ -63,6 +62,9 @@
                 <h4 class="modal-title" id="configModalLabel">Konfiguration &Auml;ndern</h4>
             </div>
             <div class="modal-body">
+                <div class="alert alert-warning" role="alert">
+                    Achtung: Das &Auml;ndern der Konfiguration macht die Savegames möglicherweise unbrauchbar.
+                </div>
                 <p>
                     Hier kannst du deine Konfiguration sehen. Sie steuert genau genommen dein ganzes Spiel, also kannst du dir damit dein eigenes Abenteuer schreiben.
                 </p>
@@ -72,8 +74,8 @@
                 <textarea id="configArea"></textarea>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                <button type="button" class="btn btn-primary">Speichern</button>
             </div>
         </div>
     </div>
@@ -88,22 +90,18 @@
                 <h4 class="modal-title" id="savegameLoadModalLabel">Neues Savegame Laden</h4>
             </div>
             <div class="modal-body">
-                <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
-                        Slot zum laden ausw&auml;hlen
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Slot 1</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Slot 2</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Slot 3</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Slot 4</a></li>
-                    </ul>
+                <p>Wähle bitte einen Slot zum laden aus. Wenn du im Spiel "speichern" ausführst, wird das aktuelle Spiel in diesem Slot gespeichert.</p>
+                <div class="btn-group" role="group" aria-label="slotSelector">
+                    <button type="button" class="btn btn-default">Slot 1</button>
+                    <button type="button" class="btn btn-default">Slot 2</button>
+                    <button type="button" class="btn btn-default">Slot 3</button>
+                    <button type="button" class="btn btn-default">Slot 4</button>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                <button type="button" class="btn btn-default">Alle Slots Leeren</button>
+                <button type="button" class="btn btn-primary">Speichern</button>
             </div>
         </div>
     </div>
