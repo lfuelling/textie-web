@@ -41,7 +41,7 @@ $(document).ready(function () {
                             term.echo("Bitte gib einen Befehl ein.")
                         }
                     }, {
-                        greetings: '\n\nDu kommst in einen dunklen Raum. Nach einiger Zeit gew&ouml;hnen sich deine Augen an die Dunkelheit.',
+                        greetings: '\n\nSpiel gestartet. Bitte Enter dr&uuml;cken.',
                         name: 'textie',
                         height: 600,
                         width: 800,

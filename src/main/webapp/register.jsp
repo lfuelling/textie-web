@@ -36,7 +36,7 @@
         <h2 class="form-signin-heading">Please sign in</h2>
         <input type="text" id="email" class="form-control" placeholder="Nutzername" required autofocus>
         <input type="password" id="password" class="form-control" placeholder="Passwort" required>
-        <input type="password" id="password2" class="form-control" placeholder="Passwort bestätigen" required>
+        <input type="password" id="password2" class="form-control" placeholder="Passwort best&auml;tigen" required>
         <button class="btn btn-lg btn-primary btn-block" id="subbtn" type="submit">Registrieren</button>
         <a href="index.jsp">Hast du schon einen Account?</a>
     </form>

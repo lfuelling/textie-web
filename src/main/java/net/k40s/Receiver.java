@@ -12,20 +12,23 @@ import de.micromata.azubi.model.Dungeon;
 @Path("textie")
 public class Receiver {
 
+    Dungeon dungeon;
+    
     @POST
     @Path("command")
     @Consumes("application/json")
     @Produces("text/plain")
     public String handleInput(TextieCommand input, @Context HttpServletRequest req) {
 
-        Dungeon dungeon;
+        
 
         String token = input.getToken();
         String command = input.getCommand();
         if(token.equals(req.getSession().getAttribute("token"))) {
 
             if(req.getSession().getAttribute("dungeon") == null) {
-                req.getSession().setAttribute("dungeon", Dungeon.createDungeon(DBUtils.getStandardConfig()));
+                String user = (String) req.getSession().getAttribute("user");
+                req.getSession().setAttribute("dungeon", Dungeon.createDungeon(DBUtils.getConfig(user)));
                 dungeon = (Dungeon) req.getSession().getAttribute("dungeon");
                 dungeon.initDoorSchalter();
                 dungeon.getPlayer().setPosition(dungeon.findRoomByNumber(1));
@@ -76,9 +79,38 @@ public class Receiver {
     @GET
     @Path("getconfig")
     @Produces("text/plain")
-    public String saveConfig(@Context HttpServletRequest req){
+    public String getConfig(@Context HttpServletRequest req){
         String user;
         user = (String) req.getSession().getAttribute("user");
         return DBUtils.getConfig(user);
+    }
+
+    @GET
+    @Path("getdefaultconfig")
+    @Produces("text/plain")
+    public String getDefaultConfig(){
+        return DBUtils.getStandardConfig();
+    }
+    
+    
+
+    @GET
+    @Path("load")
+    @Produces("text/plain")
+    public String loadGame(){
+        return "Momentan noch nicht vorhanden.";
+    }
+    @GET
+    @Path("save")
+    @Produces("text/plain")
+    public String saveGame(){
+        return "Momentan noch nicht vorhanden.";
+    }
+    @GET
+    @Path("restart")
+    @Produces("text/plain")
+    public String restartGame(){
+        dungeon = null;
+        return "Dungeon zurückgesetzt. Bitte Enter dr&uuml;cken.";
     }
 }
