@@ -25,7 +25,7 @@ public class Receiver {
         String token = input.getToken();
         String command = input.getCommand();
 
-        if(req.getSession().getAttribute("dungeon").equals(null)){
+        if(req.getSession().getAttribute("dungeon") == null){
             req.getSession().setAttribute("dungeon", Dungeon.createDungeon(DBUtils.getStandardConfig()));
             dungeon = (Dungeon) req.getSession().getAttribute("dungeon");
         } else {
