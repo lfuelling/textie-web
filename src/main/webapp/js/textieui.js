@@ -56,5 +56,12 @@ $(document).ready(function () {
 });
 $( "#logoutLink" ).click(function() {
     $.cookies.del("token");
+    $.ajax({
+        url: "api/auth/logout",
+        type: "GET",
+        success: function (data) {
+            term.echo(data);
+        }
+    });
     window.location.href = "index.jsp";
 });

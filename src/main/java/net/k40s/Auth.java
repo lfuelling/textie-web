@@ -5,10 +5,9 @@ import de.micromata.azubi.Consts;
 import net.k40s.exceptions.UsernameAlreadyTakenException;
 import net.k40s.exceptions.WrongCredentialsException;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.net.UnknownHostException;
 import java.sql.DriverManager;
@@ -20,21 +19,35 @@ import java.util.Date;
 @Path("auth")
 public class Auth {
 
+  /**
+   * Checks if the session token is valid.
+   * @param token The token
+   * @param req
+   * @return true or false
+   */
   @POST
   @Path("restore")
   @Consumes("text/plain")
   @Produces("text/plain")
-  public String restore(String input) { // TODO: Input = USERNAME&PASSENC (Wie im Beispiellogin)
-    //TODO: Datenbankverbindung
-    //DBUtils.login("blablablablasbSDJSKD");             //Namen setzen. Wo wollen wir den Token generieren?
-    return ""; // TODO: Soll Token zurückgeben
+  public String restore(String token, @Context HttpServletRequest req) {
+    if(token.equals(req.getSession().getAttribute("token"))){
+      return "true";
+    } else {
+      return "false";
+    }
   }
 
+  /**
+   * logs you in.
+   * @param input
+   * @param req
+   * @return
+   */
   @POST
   @Path("login")
   @Consumes("text/plain")
   @Produces("text/plain")
-  public String login(String input) {
+  public String login(String input, @Context HttpServletRequest req) {
 
     String username;
     String pass;
@@ -50,22 +63,30 @@ public class Auth {
       System.out.println(e.getMessage());
       return "false";
     }
-
+    req.getSession().setAttribute("token", token);
     return token;
 
   }
 
-
-  @POST
+  /**
+   * Logs you out.
+   * @param input
+   * @param req
+   * @return Always true.
+   */
+  @GET
   @Path("logout")
   @Consumes("text/plain")
-  @Produces("text/plain")
-  public String logout(String input) { //TODO: Input = Token&ID
-    //TODO: Datenbankverbindung
-    //DBUtils.logout(username);                     der benutzername muss in allen seiten abrufbar sein
-    return ""; // TODO: Soll True/False zurückgeben.
+  public String logout(String input, @Context HttpServletRequest req) {
+    req.getSession().invalidate();
+    return "true";
   }
 
+  /**
+   * Registers a new user.
+   * @param input
+   * @return true or false
+   */
   @POST
   @Path("register")
   @Consumes("text/plain")
