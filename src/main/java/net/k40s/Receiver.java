@@ -25,34 +25,46 @@ public class Receiver {
         String token = input.getToken();
         String command = input.getCommand();
         if(token.equals(req.getSession().getAttribute("token"))) {
-
-            if(req.getSession().getAttribute("dungeon") == null) {
-                String user = (String) req.getSession().getAttribute("user");
-                req.getSession().setAttribute("dungeon", Dungeon.createDungeon(DBUtils.getConfig(user)));
-                dungeon = (Dungeon) req.getSession().getAttribute("dungeon");
-                dungeon.initDoorSchalter();
-                dungeon.getPlayer().setPosition(dungeon.findRoomByNumber(1));
+            if(command.equals("start")){
+                if(req.getSession().getAttribute("dungeon") == null) {
+                    String user = (String) req.getSession().getAttribute("user");
+                    req.getSession().setAttribute("dungeon", Dungeon.createDungeon(DBUtils.getConfig(user)));
+                    dungeon = (Dungeon) req.getSession().getAttribute("dungeon");
+                    dungeon.initDoorSchalter();
+                    dungeon.getPlayer().setPosition(dungeon.findRoomByNumber(1));
+                } else {
+                    dungeon = (Dungeon) req.getSession().getAttribute("dungeon");
+                }
+                return "Textie Version 4.5-WEBAPP\n" + dungeon.getCurrentRoom().getWelcomeText();
             } else {
-                dungeon = (Dungeon) req.getSession().getAttribute("dungeon");
+
+                if(req.getSession().getAttribute("dungeon") == null) {
+                    String user = (String) req.getSession().getAttribute("user");
+                    req.getSession().setAttribute("dungeon", Dungeon.createDungeon(DBUtils.getConfig(user)));
+                    dungeon = (Dungeon) req.getSession().getAttribute("dungeon");
+                    dungeon.initDoorSchalter();
+                    dungeon.getPlayer().setPosition(dungeon.findRoomByNumber(1));
+                } else {
+                    dungeon = (Dungeon) req.getSession().getAttribute("dungeon");
+                }
+
+                Textie.diag = false;
+                Textie.webapp = true;
+                Textie.lastPrintedText = "";
+                String[] parsedargs = {""};
+                String[] parsedcmd = command.split(" ", 2);
+                if(parsedcmd.length > 1) {
+                    parsedargs = parsedcmd[1].split(" ", 2);
+                }
+
+                Textie.executeCommand(parsedcmd,
+                    parsedargs, dungeon);
+                Thread.yield();
+
+                req.getSession().setAttribute("dungeon", dungeon);
+
+                return Textie.lastPrintedText;
             }
-
-            Textie.diag = false;
-            Textie.webapp = true;
-            Textie.lastPrintedText = "";
-            String[] parsedargs = {""};
-            String[] parsedcmd = command.split(" ", 2);
-            if(parsedcmd.length > 1) {
-                parsedargs = parsedcmd[1].split(" ", 2);
-            }
-
-            Textie.executeCommand(parsedcmd,
-                parsedargs, dungeon);
-            Thread.yield();
-
-            req.getSession().setAttribute("dungeon", dungeon);
-
-            return Textie.lastPrintedText;
-
         } else {
             return "ERROR! PLEASE LOG IN AGAIN!";
         }
