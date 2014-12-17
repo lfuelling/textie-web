@@ -41,11 +41,18 @@ $(document).ready(function () {
                             term.echo("Bitte gib einen Befehl ein.")
                         }
                     }, {
-                        greetings: '\n\nDu kommst in einen dunklen Raum. Nach einiger Zeit gewöhnen sich deine Augen an die Dunkelheit.',
+                        greetings: '\n\nDu kommst in einen dunklen Raum. Nach einiger Zeit gew&ouml;hnen sich deine Augen an die Dunkelheit.',
                         name: 'textie',
                         height: 600,
                         width: 800,
                         prompt: 'Was willst du tun? > '
+                    });
+                    $.ajax({
+                        url: "api/textie/getconfig",
+                        type: "GET",
+                        success: function (data) {
+                            $("#configArea").val(data);
+                        }
                     });
                 } else {
                     window.location.href = "index.jsp";
@@ -64,4 +71,30 @@ $( "#logoutLink" ).click(function() {
         }
     });
     window.location.href = "index.jsp";
+});
+$("#saveConfigButton").click(function(event) {
+    event.preventDefault();
+    var config = $("#configArea").val();
+    var token = $.cookies.get("token");
+    var obj = {
+        config: config,
+        token: token
+    };
+    var json = JSON.stringify(obj);
+    $.ajax({
+        url: "api/textie/saveconfig",
+        type: "POST",
+        data: json,
+        contentType: "application/json",
+        success: function(data){
+            if(data == "true"){
+                $('#configModal').modal('hide')
+            } else {
+                $('#configSVWarning').hide();
+                $('#configAXError').show();
+            }
+            
+        }
+    });
+    
 });

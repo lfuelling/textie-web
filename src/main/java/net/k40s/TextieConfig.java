@@ -5,24 +5,23 @@ import java.io.Serializable;
 /**
  * @author Lukas F&uuml;lling (l.fuelling@micromata.de)
  */
-public class TextieInput implements Serializable {
-
-  private String command;
+public class TextieConfig implements Serializable {
+  private String config;
 
   private String token;
 
-  public TextieInput() {
+  public TextieConfig() {
 
   }
 
-  public String getCommand() {
+  public String getConfig() {
 
-    return command;
+    return config;
   }
 
-  public void setCommand(String command) {
+  public void setConfig(String config) {
 
-    this.command = command;
+    this.config = config;
   }
 
   public String getToken() {

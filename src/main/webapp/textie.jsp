@@ -40,7 +40,7 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Aktionen<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="#" data-toggle="modal" data-target="#savegameLoadModal">Savegame Laden</a></li>
+                        <li><a href="#" >Savegame Laden</a></li>
                         <li><a href="#" data-toggle="modal" data-target="#configModal">Konfiguration</a></li>
                         <li class="divider"></li>
                         <li><a href="#" id="logoutLink">Logout</a></li>
@@ -62,8 +62,11 @@
                 <h4 class="modal-title" id="configModalLabel">Konfiguration &Auml;ndern</h4>
             </div>
             <div class="modal-body">
-                <div class="alert alert-warning" role="alert">
-                    Achtung: Das &Auml;ndern der Konfiguration macht die Savegames möglicherweise unbrauchbar.
+                <div class="alert alert-warning" id="configSVWarning" role="alert">
+                    Achtung: Das &Auml;ndern der Konfiguration macht das Savegame möglicherweise unbrauchbar.
+                </div>
+                <div class="alert alert-danger" id="configAXError" style="display: none;" role="alert">
+                    Fehler beim Speichern der Konfiguration.
                 </div>
                 <p>
                     Hier kannst du deine Konfiguration sehen. Sie steuert genau genommen dein ganzes Spiel, also kannst du dir damit dein eigenes Abenteuer schreiben.
@@ -75,33 +78,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
-                <button type="button" class="btn btn-primary">Speichern</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- savegameLoadModal -->
-<div class="modal fade" id="savegameLoadModal" tabindex="-1" role="dialog" aria-labelledby="savegameLoadModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="savegameLoadModalLabel">Neues Savegame Laden</h4>
-            </div>
-            <div class="modal-body">
-                <p>Wähle bitte einen Slot zum laden aus. Wenn du im Spiel "speichern" ausführst, wird das aktuelle Spiel in diesem Slot gespeichert.</p>
-                <div class="btn-group" role="group" aria-label="slotSelector">
-                    <button type="button" class="btn btn-default">Slot 1</button>
-                    <button type="button" class="btn btn-default">Slot 2</button>
-                    <button type="button" class="btn btn-default">Slot 3</button>
-                    <button type="button" class="btn btn-default">Slot 4</button>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
-                <button type="button" class="btn btn-default">Alle Slots Leeren</button>
-                <button type="button" class="btn btn-primary">Speichern</button>
+                <button type="button" class="btn btn-primary" id="saveConfigButton">Speichern</button>
             </div>
         </div>
     </div>
