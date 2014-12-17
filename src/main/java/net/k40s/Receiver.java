@@ -45,6 +45,8 @@ public class Receiver {
                 parsedargs, dungeon);
         Thread.yield();
 
+        req.getSession().setAttribute("dungeon", dungeon);
+
         return Textie.lastPrintedText;
 
     }
