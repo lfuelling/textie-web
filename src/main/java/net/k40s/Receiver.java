@@ -121,8 +121,10 @@ public class Receiver {
     @GET
     @Path("restart")
     @Produces("text/plain")
-    public String restartGame(){
-        dungeon = null;
-        return "Dungeon zurückgesetzt. Bitte \"start\" eingeben und Enter dr&uuml;cken.";
+    public String restartGame(@Context HttpServletRequest req){
+        req.getSession().setAttribute("dungeon", null);
+        String user = (String) req.getSession().getAttribute("user");
+        req.getSession().setAttribute("dungeon", Dungeon.createDungeon(DBUtils.getConfig(user)));
+        return "Dungeon zurückgesetzt.\n";
     }
 }
