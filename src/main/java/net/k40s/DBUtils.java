@@ -48,7 +48,7 @@ public class DBUtils {
   public static String getConfig(String username) {
 
     DBObject query = new BasicDBObject("user", username);
-    DBObject data = getCollection("configs").findOne(query);
+    DBObject data = getCollection("users").findOne(query);
 
     if(data == null) {
       return null;
@@ -427,10 +427,11 @@ public class DBUtils {
   public static void updateConfig(String username, String config) {
 
     DBObject updateData = new BasicDBObject("user", username);
+    updateData.put("password", getPassword(username));
     updateData.put("config", config);
     updateData.put("savegame", "");
     DBObject query = new BasicDBObject("user", username);
-    getCollection("configs").update(query, updateData, true, false);
+    getCollection("users").update(query, updateData, true, false);
 
   }
 
@@ -443,9 +444,11 @@ public class DBUtils {
   public static void updateSavegame(String username, String savegame) {
 
     DBObject updateData = new BasicDBObject("user", username);
+    updateData.put("password", getPassword(username));
+    updateData.put("config", getConfig(username));
     updateData.put("savegame", savegame);
     DBObject query = new BasicDBObject("user", username);
-    getCollection("configs").update(query, updateData, true, false);
+    getCollection("users").update(query, updateData, true, false);
   }
 
   /**
@@ -477,8 +480,8 @@ public class DBUtils {
     } else {
       BasicDBObject doc = new BasicDBObject("user", name)
           .append("password", password)
-          .append("token", "");
-      //.append("config", standardConfig);
+          .append("config", getStandardConfig())
+              .append("savegame", "");
       getCollection("users").insert(doc);
     }
   }
@@ -488,8 +491,8 @@ public class DBUtils {
             String token = Secure.generateToken();
             BasicDBObject updateData = new BasicDBObject("user", name)
                 .append("password", getPassword(name))
-                .append("token", token);
-
+                .append("config", getConfig(name))
+                .append("savegame", getSavegame(name));
             getCollection("users").update(getCollection("users").findOne(new BasicDBObject("user", name)), updateData);
             return token;
     } else {
@@ -497,27 +500,8 @@ public class DBUtils {
     }
   }
 
-  public static String getToken(String username) {
-
-    DBObject result = getCollection("users").findOne(username);
-    return (String) result.get("token");
-  }
-
-  public static void logout(String name) {
-
-    BasicDBObject updateData = new BasicDBObject("user", name)
-        .append("password", getPassword(name))
-        .append("token", "");
-    getCollection("users").update(getCollection("users").findOne(name), updateData);
-  }
-
-  /*
-  public static String getConfig(String username){
-    BasicDBObject query= new BasicDBObject("user", username);
-    DBObject result = getCollection("configs").findOne(query);
-    String data = (String) result.get("config");
-    return data;
-  }
-  */
-
+        private static String getSavegame(String name) {
+                DBObject result = getCollection("users").findOne(new BasicDBObject("user", name));
+                return (String) result.get("savegame");
+        }
 }
