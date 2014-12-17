@@ -123,6 +123,6 @@ public class Receiver {
     @Produces("text/plain")
     public String restartGame(){
         dungeon = null;
-        return "Dungeon zurückgesetzt. Bitte Enter dr&uuml;cken.";
+        return "Dungeon zurückgesetzt. Bitte \"start\" eingeben und Enter dr&uuml;cken.";
     }
 }
