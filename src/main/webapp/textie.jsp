@@ -79,7 +79,7 @@
             </div>
             <div class="modal-body">
                 <div class="alert alert-warning" id="configSVWarning" role="alert">
-                    Achtung: Das &Auml;ndern der Konfiguration macht das Savegame möglicherweise unbrauchbar.
+                    Achtung: Das &Auml;ndern der Konfiguration macht das Savegame m&ouml;glicherweise unbrauchbar.
                 </div>
                 <div class="alert alert-danger" id="configAXError" style="display: none;" role="alert">
                     Fehler beim Speichern der Konfiguration.
