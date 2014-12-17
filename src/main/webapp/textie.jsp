@@ -15,7 +15,7 @@
     <link href="css/bootstrap.min.css" rel="stylesheet"/>
     <link href="css/bootstrap-theme.min.css" rel="stylesheet"/>
     <link href="css/textie.css" rel="stylesheet"/>
-    <link rel="icon" type="image/vnd.microsoft.icon" href="img/favicon.ico">
+    <link rel="icon" href="img/favicon.png">
 </head>
 <body>
 
@@ -30,7 +30,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Textie</a>
+            <img class="navbar-brand" src="img/logo_white.png">
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
