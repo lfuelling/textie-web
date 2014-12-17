@@ -64,6 +64,7 @@ public class Auth {
       return "false";
     }
     req.getSession().setAttribute("token", token);
+    req.getSession().setAttribute("user", username);
     return token;
 
   }

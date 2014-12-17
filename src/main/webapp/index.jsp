@@ -30,7 +30,7 @@
     Falscher Benutzername oder falsches Passwort!
   </div>
   <div id="security" class="alert alert-warning" style="text-align: center">
-    Deine Session ist ungültig!
+    Deine Session ist ung&uuml;ltig!
   </div>
   <form class="form-signin" role="form">
     <h2 class="form-signin-heading">Einloggen</h2>
