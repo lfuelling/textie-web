@@ -14,30 +14,31 @@ import java.net.UnknownHostException;
 
 @Path("textie")
 public class Receiver {
-    //private Dungeon dungeon = Dungeon.createDungeon();
+   private Dungeon dungeon = Dungeon.createDungeon();
 
     @POST
     @Path("command")
-    @Consumes("text/plain")
+    @Consumes("application/json")
     @Produces("text/plain")
-    public String handleInput(String input) {
+    public String handleInput(TextieInput input) {
 
-        DBUtils.updateConfig("Test2", 2,  "BlaBla");
-        return "BlaBlaBla";
-/*
+        String token = input.getToken();
+        String command = input.getCommand();
+
         Textie.diag = false;
         Textie.webapp = true;
         Textie.lastPrintedText = "";
         String[] parsedargs = {""};
-        String[] parsedcmd = input.split(" ", 2);
+        String[] parsedcmd = command.split(" ", 2);
         if (parsedcmd.length > 1) {
             parsedargs = parsedcmd[1].split(" ", 2);
         }
+
         Textie.executeCommand(parsedcmd,
                 parsedargs, dungeon);
         Thread.yield();
 
         return Textie.lastPrintedText;
-*/
+
     }
 }
