@@ -3,6 +3,7 @@ package net.k40s;
 
 import de.micromata.azubi.Consts;
 import net.k40s.exceptions.UsernameAlreadyTakenException;
+import net.k40s.exceptions.WrongCredentialsException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -23,9 +24,9 @@ public class Auth {
   @Path("restore")
   @Consumes("text/plain")
   @Produces("text/plain")
-  public String restore(String input){ // TODO: Input = USERNAME&PASSENC (Wie im Beispiellogin)
+  public String restore(String input) { // TODO: Input = USERNAME&PASSENC (Wie im Beispiellogin)
     //TODO: Datenbankverbindung
-    DBUtils.login("blablablablasbSDJSKD");             //Namen setzen. Wo wollen wir den Token generieren?
+    //DBUtils.login("blablablablasbSDJSKD");             //Namen setzen. Wo wollen wir den Token generieren?
     return ""; // TODO: Soll Token zurückgeben
   }
 
@@ -35,22 +36,22 @@ public class Auth {
   @Produces("text/plain")
   public String login(String input) {
 
-    String email;
+    String username;
     String pass;
-    String token = "";
+    String token;
 
     String[] pi = StringUtils.parseLogin(input);
-    email = pi[0];
+    username = pi[0];
     pass = pi[1];
 
-    //TODO: Database stuff...
-    DBUtils.login(email);             //email durch namen ersetzen. Wo wollen wir den Token generieren?
-
-    if(true == false/* TODO: PASSWORT RICHTIG */){
-      return token;
-    } else {
+    try {
+      token = DBUtils.login(username, pass);
+    } catch(WrongCredentialsException e) {
+      System.out.println(e.getMessage());
       return "false";
     }
+
+    return token;
 
   }
 

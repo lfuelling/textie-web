@@ -3,6 +3,7 @@ package net.k40s;
 import com.mongodb.*;
 import net.k40s.exceptions.DatabaseNotFoundException;
 import net.k40s.exceptions.UsernameAlreadyTakenException;
+import net.k40s.exceptions.WrongCredentialsException;
 
 import java.net.UnknownHostException;
 
@@ -16,37 +17,41 @@ public class DBUtils {
 
   /**
    * Holt sich die Collection mit gegebenem Namen aus der DB
+   *
    * @param collectionName Name der Collection
    * @return die Collection
    */
   public static DBCollection getCollection(String collectionName) {
+
     MongoClient mongoClient = null;
     try {
       mongoClient = new MongoClient();
-    } catch (UnknownHostException e) {
+    } catch(UnknownHostException e) {
       e.printStackTrace();
     }
-          DB db = null;
-          if(mongoClient != null) {
-                  db = mongoClient.getDB("textieWeb");
-          } else {
-                  throw new DatabaseNotFoundException("Database not found.");
-          }
+    DB db = null;
+    if(mongoClient != null) {
+      db = mongoClient.getDB("textieWeb");
+    } else {
+      throw new DatabaseNotFoundException("Database not found.");
+    }
 
-          DBCollection coll = db.getCollection(collectionName);
+    DBCollection coll = db.getCollection(collectionName);
 
     return coll;
   }
 
   /**
    * Holt die Standardkonfiguration
+   *
    * @return Die Standardkonfiguration
    */
   public static Object getStandardConfig() {
+
     DBObject query = new BasicDBObject("user", "Standard");
     DBObject data = getCollection("users").findOne(query);
 
-    if (data == null) {
+    if(data == null) {
       return null;
     } else {
     }
@@ -404,17 +409,17 @@ public class DBUtils {
   }
 
   /**
-   *
    * @param username Benutzername des eingeloggten
-   * @param slot Speicherslot
+   * @param slot     Speicherslot
    * @return Die gesuchte Konfiguration
    */
   public static String getConfig(String username, int slot) {
+
     DBObject query = new BasicDBObject("user", username);
     query.put("slot", String.valueOf(slot));
     DBObject data = getCollection("configs").findOne(query);
 
-    if (data == null) {
+    if(data == null) {
       return null;
     } else {
     }
@@ -425,11 +430,13 @@ public class DBUtils {
   /**
    * Ändert die Konfiguration des Benutzers mit angegebenem Slot.
    * Achtung! Das Savegame wird gelöscht
+   *
    * @param username
    * @param slot
-   * @param config Die neue Konfiguration
+   * @param config   Die neue Konfiguration
    */
-  public static void updateConfig(String username, int slot, String config){
+  public static void updateConfig(String username, int slot, String config) {
+
     DBObject updateData = new BasicDBObject("user", username);
     updateData.put("slot", String.valueOf(slot));
     updateData.put("config", config);
@@ -442,11 +449,13 @@ public class DBUtils {
 
   /**
    * Ändert das Savegame. Sollte für das Speichern des Spiels verwendet werden.
+   *
    * @param username
    * @param slot
    * @param savegame Das neue Savegame
    */
-  public static void updateSavegame(String username, int slot, String savegame){
+  public static void updateSavegame(String username, int slot, String savegame) {
+
     DBObject updateData = new BasicDBObject("user", username);
     updateData.put("slot", String.valueOf(slot));
     updateData.put("config", getConfig(username, slot));
@@ -458,53 +467,64 @@ public class DBUtils {
 
   /**
    * Holt das Passwort des angegebenen Benutzers aus der Datenbank
+   *
    * @param username
    * @return Das Passwort
    */
-  public static String getPassword(String username){
+  public static String getPassword(String username) {
+
     DBObject result = getCollection("users").findOne(username);
     return (String) result.get("password");
   }
 
   /**
    * Legt einen neuen Benutzer an.
+   *
    * @param name
    * @param password
    * @throws UsernameAlreadyTakenException
    */
   public static void createUser(String name, String password) throws UsernameAlreadyTakenException {
+
     DBObject query = new BasicDBObject("name", name);
     DBObject data = getCollection("users").findOne(query);
 
-    if (data != null) {
-            throw new UsernameAlreadyTakenException(name);
+    if(data != null) {
+      throw new UsernameAlreadyTakenException(name);
     } else {
       BasicDBObject doc = new BasicDBObject("user", name)
-              .append("password", password)
-              .append("token", "");
-              //.append("config", standardConfig);
+          .append("password", password)
+          .append("token", "");
+      //.append("config", standardConfig);
       getCollection("users").insert(doc);
     }
   }
 
-  public static void login(String name){
-    String token = ""; //TODO muss noch generiert werden
-    BasicDBObject updateData = new BasicDBObject("user", name)
-            .append("password", getPassword(name))
-            .append("token", token);
+  public static String login(String name, String password) throws WrongCredentialsException {
+    if(getPassword(name).equals(password)) {
+            String token = Secure.generateToken();
+            BasicDBObject updateData = new BasicDBObject("user", name)
+                .append("password", getPassword(name))
+                .append("token", token);
 
-    getCollection("users").update(getCollection("users").findOne(name), updateData);
+            getCollection("users").update(getCollection("users").findOne(name), updateData);
+            return token;
+    } else {
+            throw new WrongCredentialsException(name);
+    }
   }
 
-  public static String getToken(String username){
+  public static String getToken(String username) {
+
     DBObject result = getCollection("users").findOne(username);
     return (String) result.get("token");
   }
 
-  public static void logout(String name){
+  public static void logout(String name) {
+
     BasicDBObject updateData = new BasicDBObject("user", name)
-            .append("password", getPassword(name))
-            .append("token", "");
+        .append("password", getPassword(name))
+        .append("token", "");
     getCollection("users").update(getCollection("users").findOne(name), updateData);
   }
 
