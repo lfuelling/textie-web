@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="">
   <meta name="author" content="">
-  <link rel="icon" href="img/favicon.ico">
+  <link rel="icon" href="img/favicon.png">
 
   <title>Login</title>
 
@@ -27,23 +27,17 @@
 
 <div id="loginform" class="container" style="display: none">
   <div id="wrongpass" class="alert alert-danger" style="text-align: center">
-    Wrong email or password!
+    Falscher Benutzername oder falsches Passwort!
   </div>
   <div id="security" class="alert alert-warning" style="text-align: center">
-    Wrong email or password!
+    Deine Session ist ungültig!
   </div>
   <form class="form-signin" role="form">
-    <h2 class="form-signin-heading">Please sign in</h2>
-    <input type="email" id="email" class="form-control" placeholder="Email address" required autofocus>
-    <input type="password" id="password" class="form-control" placeholder="Password" required>
-
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" value="remember-me"> Remember me
-      </label>
-    </div>
-    <button class="btn btn-lg btn-primary btn-block" id="subbtn" type="submit">Sign in</button>
-    <a href="register.jsp">Register</a>
+    <h2 class="form-signin-heading">Einloggen</h2>
+    <input type="email" id="email" class="form-control" placeholder="Nutzername" required autofocus>
+    <input type="password" id="password" class="form-control" placeholder="Passwort" required>
+    <button class="btn btn-lg btn-primary btn-block" id="subbtn" type="submit">Anmelden</button>
+    <a href="register.jsp">Noch keinen Account? Hier Registrieren!</a>
   </form>
 </div>
 <!-- /container -->

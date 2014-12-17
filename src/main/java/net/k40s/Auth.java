@@ -76,8 +76,8 @@ public class Auth {
    */
   @GET
   @Path("logout")
-  @Consumes("text/plain")
-  public String logout(String input, @Context HttpServletRequest req) {
+  @Produces("text/plain")
+  public String logout(@Context HttpServletRequest req) {
     req.getSession().invalidate();
     return "true";
   }
