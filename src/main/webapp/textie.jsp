@@ -114,8 +114,6 @@
         });
 
     });
-</script>
-<script type="text/javascript">
     $( "#logoutLink" ).click(function() {
         $.cookies.del("token");
         $.ajax({
@@ -136,7 +134,6 @@
             }
         });
     });
-    
     $("#loadGame").click(function(){
         $.ajax({
             url: "api/textie/save",
@@ -165,6 +162,7 @@
         });
     });
 </script>
+
 
 <script type="text/javascript">
     $('document').ready(function(){

@@ -42,7 +42,7 @@ $(document).ready(function () {
                             term.echo("Bitte gib einen Befehl ein.")
                         }
                     }, {
-                        greetings: '\n\nSpiel gestartet. Bitte Enter dr&uuml;cken.',
+                        greetings: '\n\nSpiel geladen. Zum starten bitte \"start\" eingeben und Enter dr&uuml;cken.',
                         name: 'textie',
                         height: 600,
                         width: 800,
