@@ -24,6 +24,7 @@ public class Receiver {
 
         String token = input.getToken();
         String command = input.getCommand();
+        System.out.println("[COMMAND] -> " + req.getHeader("User-Agent") + " .. " + command);
         if(token.equals(req.getSession().getAttribute("token"))) {
             if(command.equals("start")){
                 if(req.getSession().getAttribute("dungeon") == null) {

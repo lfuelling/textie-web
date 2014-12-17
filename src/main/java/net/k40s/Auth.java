@@ -56,7 +56,7 @@ public class Auth {
     String[] pi = StringUtils.parseLogin(input);
     username = pi[0];
     pass = pi[1];
-
+    System.out.println("[LOGIN] -> " + req.getHeader("User-Agent") + " .. " + username);
     try {
       token = DBUtils.login(username, pass);
     } catch(WrongCredentialsException e) {
@@ -92,15 +92,14 @@ public class Auth {
   @Path("register")
   @Consumes("text/plain")
   @Produces("text/plain")
-  public String register(String input) {
+  public String register(String input, @Context HttpServletRequest req) {
 
     String email;
     String pass;
-
     String[] pi = StringUtils.parseLogin(input);
     email = pi[0];
     pass = pi[1];
-
+    System.out.println("[REGISTER] -> " + req.getHeader("User-Agent") + " .. " + email);
     try {
       DBUtils.createUser(email, pass);
     } catch(UsernameAlreadyTakenException e) {
