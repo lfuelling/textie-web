@@ -20,6 +20,7 @@ $(document).ready(function () {
                     window.location.href = "index.jsp";
                 } else if (data == true) {
                     $('#terminal').terminal(function (command, term) {
+                        window.term = term;
                         var obj = {
                             command: command,
                             token: token
