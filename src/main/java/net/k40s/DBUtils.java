@@ -465,7 +465,7 @@ public class DBUtils {
    */
   public static String getPassword(String username) {
 
-    DBObject result = getCollection("users").findOne(username);
+    DBObject result = getCollection("users").findOne(new BasicDBObject("user", username));
     return (String) result.get("password");
   }
 
@@ -499,7 +499,7 @@ public class DBUtils {
                 .append("password", getPassword(name))
                 .append("token", token);
 
-            getCollection("users").update(getCollection("users").findOne(name), updateData);
+            getCollection("users").update(getCollection("users").findOne(new BasicDBObject("user", name)), updateData);
             return token;
     } else {
             throw new WrongCredentialsException(name);

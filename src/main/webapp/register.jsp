@@ -34,8 +34,7 @@
     </div>
     <form class="form-signin" role="form">
         <h2 class="form-signin-heading">Please sign in</h2>
-        <input type="email" id="username" class="form-control" placeholder="Username" required autofocus>
-        <input type="email" id="email" class="form-control" placeholder="Email Address" required>
+        <input type="text" id="email" class="form-control" placeholder="Username" required autofocus>
         <input type="password" id="password" class="form-control" placeholder="Password" required>
         <input type="password" id="password2" class="form-control" placeholder="Confirm Password" required>
         <button class="btn btn-lg btn-primary btn-block" id="subbtn" type="submit">Sign Up</button>

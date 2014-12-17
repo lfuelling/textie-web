@@ -12,7 +12,8 @@ import de.micromata.azubi.model.Dungeon;
 
 @Path("textie")
 public class Receiver {
-    private Dungeon dungeon = Dungeon.createDungeon(DBUtils.getStandardConfig());
+    public Dungeon dungeon = Dungeon.createDungeon(DBUtils.getStandardConfig());
+
 
     @POST
     @Path("command")
