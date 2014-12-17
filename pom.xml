@@ -72,7 +72,7 @@
         <dependency>
             <groupId>de.micromata.azubi</groupId>
             <artifactId>textie</artifactId>
-            <version>4.0-WEBAPP</version> <!-- Because we DO need the webapp mods -->
+            <version>4.5-WEBAPP</version> <!-- Because we DO need the webapp mods -->
         </dependency>
         <dependency>
             <!-- note: typically only ".0" patch version exists for core annotations -->

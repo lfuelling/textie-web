@@ -5,26 +5,20 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import com.mongodb.*;
 import de.micromata.azubi.Textie;
 import de.micromata.azubi.model.Dungeon;
 
-import java.net.UnknownHostException;
 
 
 @Path("textie")
 public class Receiver {
-    //private Dungeon dungeon = Dungeon.createDungeon();
+    private Dungeon dungeon = Dungeon.createDungeon(DBUtils.getStandardConfig());
 
     @POST
     @Path("command")
     @Consumes("text/plain")
     @Produces("text/plain")
     public String handleInput(String input) {
-
-        DBUtils.updateConfig("Test2", 2,  "BlaBla");
-        return "BlaBlaBla";
-/*
         Textie.diag = false;
         Textie.webapp = true;
         Textie.lastPrintedText = "";
@@ -38,6 +32,6 @@ public class Receiver {
         Thread.yield();
 
         return Textie.lastPrintedText;
-*/
+
     }
 }
