@@ -28,6 +28,7 @@ public class Receiver {
         if(req.getSession().getAttribute("dungeon") == null){
             req.getSession().setAttribute("dungeon", Dungeon.createDungeon(DBUtils.getStandardConfig()));
             dungeon = (Dungeon) req.getSession().getAttribute("dungeon");
+            dungeon.getPlayer().setPosition(dungeon.findRoomByNumber(1));
         } else {
             dungeon = (Dungeon) req.getSession().getAttribute("dungeon");
         }
