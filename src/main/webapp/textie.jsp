@@ -40,8 +40,11 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Aktionen<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="#" >Savegame Laden</a></li>
-                        <li><a href="#" data-toggle="modal" data-target="#configModal">Konfiguration</a></li>
+                        <li><a href="#" id="saveGame">Speichern</a></li>
+                        <li><a href="#" id="loadGame">Laden</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#" id="reloadConfig">Konfiguration Neu Laden</a></li>
+                        <li><a href="#" data-toggle="modal" data-target="#configModal">Konfiguration &Auml;ndern</a></li>
                         <li class="divider"></li>
                         <li><a href="#" id="logoutLink">Logout</a></li>
                     </ul>
@@ -69,7 +72,7 @@
                     Fehler beim Speichern der Konfiguration.
                 </div>
                 <p>
-                    Hier kannst du deine Konfiguration sehen. Sie steuert genau genommen dein ganzes Spiel, also kannst du dir damit dein eigenes Abenteuer schreiben.
+                    Hier kannst du deine Konfiguration sehen. Sie definiert genau genommen dein ganzes Spiel, also kannst du dir damit dein eigenes Abenteuer schreiben.
                 </p>
                 <p>
                     Am besten funktioniert das ganze, indem du die Konfiguration in einen Editor kopierst und dort bearbeitest. Danach f&uuml;ge sie einfach hier ein und klick auf speichern.
@@ -78,6 +81,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                <button type="button" class="btn btn-default" id="restoreDefaultConfigButton">Standard Wiederherstellen</button>
                 <button type="button" class="btn btn-primary" id="saveConfigButton">Speichern</button>
             </div>
         </div>
@@ -123,7 +127,45 @@
         });
         window.location.href = "index.jsp";
     });
+    $("#restoreDefaultConfigButton").click(function(){
+        $.ajax({
+            url: "api/textie/getdefaultconfig",
+            type: "GET",
+            success: function (data) {
+                $("#configArea").val(data);
+            }
+        });
+    });
+    
+    $("#loadGame").click(function(){
+        $.ajax({
+            url: "api/textie/save",
+            type: "GET",
+            success: function (data) {
+                term.echo(data);
+            }
+        });
+    });
+    $("#saveGame").click(function(){
+        $.ajax({
+            url: "api/textie/load",
+            type: "GET",
+            success: function (data) {
+                term.echo(data);
+            }
+        });
+    });
+    $("#reloadConfig").click(function(){
+        $.ajax({
+            url: "api/textie/restart",
+            type: "GET",
+            success: function (data) {
+                term.echo(data);
+            }
+        });
+    });
 </script>
+
 <script type="text/javascript">
     $('document').ready(function(){
         $.ajax({
