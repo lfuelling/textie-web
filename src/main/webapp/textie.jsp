@@ -124,5 +124,16 @@
         window.location.href = "index.jsp";
     });
 </script>
+<script type="text/javascript">
+    $('document').ready(function(){
+        $.ajax({
+            url: "api/textie/getconfig",
+            type: "GET",
+            success: function (data) {
+                $("#configArea").val(data);
+            }
+        });
+    });
+</script>
 </body>
 </html>

@@ -47,13 +47,6 @@ $(document).ready(function () {
                         width: 800,
                         prompt: 'Was willst du tun? > '
                     });
-                    $.ajax({
-                        url: "api/textie/getconfig",
-                        type: "GET",
-                        success: function (data) {
-                            $("#configArea").val(data);
-                        }
-                    });
                 } else {
                     window.location.href = "index.jsp";
                 }
