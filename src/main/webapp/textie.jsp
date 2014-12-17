@@ -83,5 +83,46 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    $("#saveConfigButton").click(function(event) {
+        event.preventDefault();
+        var config = $("#configArea").val();
+        var token = $.cookies.get("token");
+        var obj = {
+            config: config,
+            token: token
+        };
+        var json = JSON.stringify(obj);
+        $.ajax({
+            url: "api/textie/saveconfig",
+            type: "POST",
+            data: json,
+            contentType: "application/json",
+            success: function(data){
+                if(data == "true"){
+                    $('#configModal').modal('hide')
+                } else {
+                    $('#configSVWarning').hide();
+                    $('#configAXError').show();
+                }
+
+            }
+        });
+
+    });
+</script>
+<script type="text/javascript">
+    $( "#logoutLink" ).click(function() {
+        $.cookies.del("token");
+        $.ajax({
+            url: "api/auth/logout",
+            type: "GET",
+            success: function (data) {
+                term.echo(data);
+            }
+        });
+        window.location.href = "index.jsp";
+    });
+</script>
 </body>
 </html>
