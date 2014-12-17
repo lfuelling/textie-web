@@ -64,7 +64,11 @@
 </nav>
 <div style="height:70px;"></div>
 <div class="container" id="terminal"></div>
-
+<div id="footer">
+    <div class="container">
+        <p class="muted credit">Gemacht von <a href="http://k40s.net">@</a><a href="http://github.com/lfuelling">lfuelling</a> und <a href="http://github.com/YuleZ">@YuleZ</a>.</p>
+    </div>
+</div>
 <!-- configModal -->
 <div class="modal fade" id="configModal" tabindex="-1" role="dialog" aria-labelledby="configModalLabel" aria-hidden="true">
     <div class="modal-dialog">
