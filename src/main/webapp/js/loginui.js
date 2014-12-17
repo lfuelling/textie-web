@@ -23,7 +23,7 @@ $(document).ready(function () {
                     $("#wrongpass").hide();
                     $("#loginform").fadeIn("slow").show();
                 } else if (data == true) {
-                    window.location.href = "main.jsp";
+                    window.location.href = "textie.jsp";
                 } else {
                     console.log("no connection to api.");
                 }
@@ -48,7 +48,7 @@ $("#subbtn").click(function (event) {
                 console.warn("Server returned: false");
             } else if (data != null) {
                 $.cookies.set("token", data);
-                window.location.href = "main.jsp";
+                window.location.href = "textie.jsp";
             } else {
                 $("#wrongpass").fadeIn("slow").show();
             }
