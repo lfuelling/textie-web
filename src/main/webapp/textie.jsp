@@ -10,6 +10,7 @@
     <script src="js/jquery.terminal-min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.cookies.min.js"></script>
+    <script src="js/textieui.js"></script>
     <link href="css/jquery.terminal.css" rel="stylesheet"/>
     <link href="css/bootstrap.min.css" rel="stylesheet"/>
     <link href="css/bootstrap-theme.min.css" rel="stylesheet"/>
