@@ -22,8 +22,6 @@ public class Receiver {
 
         String token = input.getToken();
         String command = input.getCommand();
-
-
         if(token.equals(req.getSession().getAttribute("token"))) {
 
             if(req.getSession().getAttribute("dungeon").equals(null)) {

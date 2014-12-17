@@ -43,13 +43,11 @@ public class DBUtils {
 
   /**
    * @param username Benutzername des eingeloggten
-   * @param slot     Speicherslot
    * @return Die gesuchte Konfiguration
    */
-  public static String getConfig(String username, int slot) {
+  public static String getConfig(String username) {
 
     DBObject query = new BasicDBObject("user", username);
-    query.put("slot", String.valueOf(slot));
     DBObject data = getCollection("configs").findOne(query);
 
     if(data == null) {
@@ -424,17 +422,14 @@ public class DBUtils {
    * Achtung! Das Savegame wird gelöscht
    *
    * @param username
-   * @param slot
    * @param config   Die neue Konfiguration
    */
-  public static void updateConfig(String username, int slot, String config) {
+  public static void updateConfig(String username, String config) {
 
     DBObject updateData = new BasicDBObject("user", username);
-    updateData.put("slot", String.valueOf(slot));
     updateData.put("config", config);
     updateData.put("savegame", "");
     DBObject query = new BasicDBObject("user", username);
-    query.put("slot", slot);
     getCollection("configs").update(query, updateData, true, false);
 
   }
@@ -443,17 +438,13 @@ public class DBUtils {
    * Ändert das Savegame. Sollte für das Speichern des Spiels verwendet werden.
    *
    * @param username
-   * @param slot
    * @param savegame Das neue Savegame
    */
-  public static void updateSavegame(String username, int slot, String savegame) {
+  public static void updateSavegame(String username, String savegame) {
 
     DBObject updateData = new BasicDBObject("user", username);
-    updateData.put("slot", String.valueOf(slot));
-    updateData.put("config", getConfig(username, slot));
     updateData.put("savegame", savegame);
     DBObject query = new BasicDBObject("user", username);
-    query.put("slot", slot);
     getCollection("configs").update(query, updateData, true, false);
   }
 
@@ -521,7 +512,7 @@ public class DBUtils {
   }
 
   /*
-  public static String getConfig(String username, int slot){
+  public static String getConfig(String username){
     BasicDBObject query= new BasicDBObject("user", username);
     DBObject result = getCollection("configs").findOne(query);
     String data = (String) result.get("config");
