@@ -24,9 +24,11 @@ public class Receiver {
         String command = input.getCommand();
         if(token.equals(req.getSession().getAttribute("token"))) {
 
-            if(req.getSession().getAttribute("dungeon").equals(null)) {
+            if(req.getSession().getAttribute("dungeon") == null) {
                 req.getSession().setAttribute("dungeon", Dungeon.createDungeon(DBUtils.getStandardConfig()));
                 dungeon = (Dungeon) req.getSession().getAttribute("dungeon");
+                dungeon.initDoorSchalter();
+                dungeon.getPlayer().setPosition(dungeon.findRoomByNumber(1));
             } else {
                 dungeon = (Dungeon) req.getSession().getAttribute("dungeon");
             }
