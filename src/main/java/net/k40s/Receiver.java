@@ -22,7 +22,7 @@ public class Receiver {
     @Produces("text/plain")
     public String handleInput(String input) {
 
-        DBUtils.updateConfig("Test2", String.valueOf(2),  "BlaBla");
+        DBUtils.updateConfig("Test2", 2,  "BlaBla");
         return "BlaBlaBla";
 /*
         Textie.diag = false;

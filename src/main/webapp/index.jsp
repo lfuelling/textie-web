@@ -65,7 +65,7 @@
       $("#loginform").fadeIn("slow").show();
     } else {
       $.ajax({
-        url: "webapi/restore",
+        url: "api/auth/restore",
         type: "POST",
         data: token,
         contentType: "text/plain; charset=utf-8",
@@ -98,7 +98,7 @@
     var pass = $("#password").val();
     var passenc = $.sha1(pass);
     $.ajax({
-      url: "webapi/login",
+      url: "api/auth/login",
       type: "POST",
       data: {"email": $("#email").val(), "pass": passenc},
       contentType: "text/plain; charset=utf-8",
