@@ -34,7 +34,9 @@
   ga('send', 'pageview');
 
 </script>
-<div id="loginform" class="container" style="display: none">
+<div class="container">
+  <div class="col-md-4"></div>
+<div id="loginform" class="col-md-4" style="display: none">
   <div id="wrongpass" class="alert alert-danger" style="text-align: center">
     Falscher Benutzername oder falsches Passwort!
   </div>
@@ -50,8 +52,9 @@
   </form>
 </div>
 <!-- /container -->
+<div class="col-md-4" style="margin-top: 50px;">Textie ist ein Spiel, dass von <a href="https://github.com/lfuelling">@lfuelling</a> und <a href="https://github.com/YuleZ">@YuleZ</a> im Rahmen der Ausbildung programmiert wurde. Zum spielen ist ein Account notwendig. Textie ist kostenlos und beh&auml;lt als einzige Daten den Benutzernamen, einen Hash vom Passwort, den <a href="https://de.wikipedia.org/wiki/User_Agent">User Agent</a> und die Konfiguration/Speicherst&auml;nde des jeweiligen Nutzers. Diese Seite ist bestimmt hackbar, also ist es empfehlenswert kein bereits auf anderen Seiten verwendetes Passwort zu benutzen.</div>
 
-
+</div>
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="js/ie10-viewport-bug-workaround.js"></script>
 <!-- JQuery -->
